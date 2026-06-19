@@ -1,0 +1,72 @@
+[
+  {
+    "id": "quiz-001", "category": "general", "difficulty": "easy", "rewardAmount": 5,
+    "question": "How many glasses of water should an average adult drink daily?",
+    "questionKo": "How many glasses of water should an average adult drink daily?",
+    "options": [
+      { "text": "4 glasses", "textKo": "4 glasses" },
+      { "text": "8 glasses", "textKo": "8 glasses" },
+      { "text": "12 glasses", "textKo": "12 glasses" },
+      { "text": "2 glasses", "textKo": "2 glasses" }
+    ],
+    "correctIndex": 1,
+    "explanation": "Health experts generally recommend 8 glasses (about 2 liters) of water per day for average adults.",
+    "explanationKo": "Health experts generally recommend 8 glasses (about 2 liters) of water per day for average adults."
+  },
+  {
+    "id": "quiz-002", "category": "prevention", "difficulty": "easy", "rewardAmount": 5,
+    "question": "How long should you wash your hands with soap?",
+    "questionKo": "How long should you wash your hands with soap?",
+    "options": [
+      { "text": "5 seconds", "textKo": "5 seconds" },
+      { "text": "10 seconds", "textKo": "10 seconds" },
+      { "text": "20 seconds", "textKo": "20 seconds" },
+      { "text": "60 seconds", "textKo": "60 seconds" }
+    ],
+    "correctIndex": 2,
+    "explanation": "The CDC recommends washing hands for at least 20 seconds with soap and water.",
+    "explanationKo": "The CDC recommends washing hands for at least 20 seconds with soap and water."
+  },
+  {
+    "id": "quiz-003", "category": "exercise", "difficulty": "medium", "rewardAmount": 5,
+    "question": "How much daily walking reduces heart disease risk by 35%?",
+    "questionKo": "How much daily walking reduces heart disease risk by 35%?",
+    "options": [
+      { "text": "10 minutes", "textKo": "10 minutes" },
+      { "text": "30 minutes", "textKo": "30 minutes" },
+      { "text": "60 minutes", "textKo": "60 minutes" },
+      { "text": "90 minutes", "textKo": "90 minutes" }
+    ],
+    "correctIndex": 1,
+    "explanation": "Research shows that just 30 minutes of brisk walking daily significantly reduces cardiovascular risk.",
+    "explanationKo": "Research shows that just 30 minutes of brisk walking daily significantly reduces cardiovascular risk."
+  },
+  {
+    "id": "quiz-004", "category": "neurological", "difficulty": "medium", "rewardAmount": 5,
+    "question": "Which is NOT a common headache trigger?",
+    "questionKo": "Which is NOT a common headache trigger?",
+    "options": [
+      { "text": "Dehydration", "textKo": "Dehydration" },
+      { "text": "Eye strain", "textKo": "Eye strain" },
+      { "text": "Reading books", "textKo": "Reading books" },
+      { "text": "Poor posture", "textKo": "Poor posture" }
+    ],
+    "correctIndex": 2,
+    "explanation": "While prolonged screen use causes eye strain headaches, general reading is not a primary trigger.",
+    "explanationKo": "While prolonged screen use causes eye strain headaches, general reading is not a primary trigger."
+  },
+  {
+    "id": "quiz-005", "category": "ophthalmology", "difficulty": "easy", "rewardAmount": 5,
+    "question": "What is the 20-20-20 rule for eye care?",
+    "questionKo": "What is the 20-20-20 rule for eye care?",
+    "options": [
+      { "text": "Sleep 20 hours", "textKo": "Sleep 20 hours" },
+      { "text": "Every 20 min, look 20 ft away for 20 sec", "textKo": "Every 20 min, look 20 ft (6m) away for 20 sec" },
+      { "text": "Blink 20 times per minute", "textKo": "Blink 20 times per minute" },
+      { "text": "Use eye drops 20 times daily", "textKo": "Use eye drops 20 times daily" }
+    ],
+    "correctIndex": 1,
+    "explanation": "The 20-20-20 rule helps reduce digital eye strain by giving your eyes regular breaks.",
+    "explanationKo": "The 20-20-20 rule helps reduce digital eye strain by giving your eyes regular breaks."
+  }
+]

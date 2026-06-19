@@ -1,0 +1,68 @@
+// Exercise Pool Schema — STEPN-style daily exercise staking pool
+//
+// NOTE: These models should be added to the main schema.prisma file.
+// This file serves as a reference and can be merged into schema.prisma.
+
+// ── Exercise Pool ──
+
+model ExercisePool {
+  id               Int       @id @default(autoincrement())
+  poolDate         DateTime  @unique @map("pool_date") @db.Date
+  onchainPoolId    Int?      @unique @map("onchain_pool_id")
+  startTime        DateTime  @map("start_time") @db.Timestamptz
+  endTime          DateTime  @map("end_time") @db.Timestamptz
+  totalStaked      Decimal   @default(0) @map("total_staked") @db.Decimal(24, 8)
+  participantCount Int       @default(0) @map("participant_count")
+  completedCount   Int       @default(0) @map("completed_count")
+  settled          Boolean   @default(false)
+  settledAt        DateTime? @map("settled_at") @db.Timestamptz
+  totalReward      Decimal   @default(0) @map("total_reward") @db.Decimal(24, 8)
+  platformFee      Decimal   @default(0) @map("platform_fee") @db.Decimal(24, 8)
+  settleTxHash     String?   @map("settle_tx_hash") @db.VarChar(66)
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  participants ExercisePoolParticipant[]
+
+  @@index([poolDate])
+  @@index([settled])
+  @@map("exercise_pools")
+}
+
+// ── Exercise Pool Participant ──
+
+model ExercisePoolParticipant {
+  id              Int       @id @default(autoincrement())
+  poolId          Int       @map("pool_id")
+  userId          String    @map("user_id") @db.Uuid
+  walletAddress   String    @map("wallet_address") @db.VarChar(42)
+  stakedAmount    Decimal   @map("staked_amount") @db.Decimal(24, 8)
+  stakeTxHash     String?   @map("stake_tx_hash") @db.VarChar(66)
+  completed       Boolean   @default(false)
+  exerciseMinutes Int       @default(0) @map("exercise_minutes")
+  exerciseType    String?   @map("exercise_type") @db.VarChar(30)
+  heartRateAvg    Int?      @map("heart_rate_avg")
+  heartRateMax    Int?      @map("heart_rate_max")
+  caloriesBurned  Int?      @map("calories_burned")
+  steps           Int?
+  distance        Decimal?  @db.Decimal(12, 2) // meters
+  dataSource      String    @default("manual") @map("data_source") @db.VarChar(30)
+  proofData       Json?     @map("proof_data") @db.JsonB // Raw exercise proof data
+  completedAt     DateTime? @map("completed_at") @db.Timestamptz
+  verifiedAt      DateTime? @map("verified_at") @db.Timestamptz
+  verifyTxHash    String?   @map("verify_tx_hash") @db.VarChar(66)
+  rewardAmount    Decimal?  @map("reward_amount") @db.Decimal(24, 8)
+  claimed         Boolean   @default(false)
+  claimedAt       DateTime? @map("claimed_at") @db.Timestamptz
+  claimTxHash     String?   @map("claim_tx_hash") @db.VarChar(66)
+  antiCheatFlags  Json?     @map("anti_cheat_flags") @db.JsonB // Validation flags
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  pool ExercisePool @relation(fields: [poolId], references: [id])
+  user User         @relation(fields: [userId], references: [id])
+
+  @@unique([poolId, userId])
+  @@index([userId])
+  @@index([poolId, completed])
+  @@index([userId, createdAt])
+  @@map("exercise_pool_participants")
+}

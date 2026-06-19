@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "paths": {
+      "@health-journal/shared/*": ["./packages/shared/*"],
+      "@health-journal/ai-scribe/*": ["./packages/ai-scribe/*"],
+      "@health-journal/education/*": ["./packages/education/*"],
+      "@health-journal/contracts/*": ["./packages/contracts/*"],
+      "@health-journal/wearable-adapter": ["./packages/wearable-adapter/index.ts"],
+      "@health-journal/wearable-adapter/*": ["./packages/wearable-adapter/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

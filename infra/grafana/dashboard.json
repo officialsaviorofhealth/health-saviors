@@ -1,0 +1,47 @@
+{
+  "dashboard": {
+    "title": "AI Health Journal — Production Monitoring",
+    "panels": [
+      {
+        "title": "API Response Time",
+        "type": "timeseries",
+        "targets": [{ "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))" }]
+      },
+      {
+        "title": "Active Users (24h)",
+        "type": "stat",
+        "targets": [{ "expr": "count(increase(health_entry_created_total[24h]) > 0)" }]
+      },
+      {
+        "title": "H2E Minted Today",
+        "type": "stat",
+        "targets": [{ "expr": "increase(h2e_minted_total[24h])" }]
+      },
+      {
+        "title": "AI Scribe Latency",
+        "type": "timeseries",
+        "targets": [{ "expr": "histogram_quantile(0.95, rate(ai_scribe_duration_seconds_bucket[5m]))" }]
+      },
+      {
+        "title": "Error Rate",
+        "type": "timeseries",
+        "targets": [{ "expr": "rate(http_requests_total{status=~'5..'}[5m])" }]
+      },
+      {
+        "title": "BSC Transaction Success Rate",
+        "type": "gauge",
+        "targets": [{ "expr": "rate(bsc_tx_success_total[1h]) / rate(bsc_tx_total[1h]) * 100" }]
+      },
+      {
+        "title": "Anti-Gaming Blocks",
+        "type": "stat",
+        "targets": [{ "expr": "increase(anti_gaming_blocked_total[24h])" }]
+      },
+      {
+        "title": "IPFS Upload Queue",
+        "type": "gauge",
+        "targets": [{ "expr": "bullmq_queue_size{queue='ipfs-upload'}" }]
+      }
+    ]
+  }
+}

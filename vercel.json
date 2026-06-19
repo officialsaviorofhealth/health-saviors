@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd packages/prisma && npx prisma@5.22.0 generate && cd ../../apps/web && npm run build",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs"
+}

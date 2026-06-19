@@ -1,0 +1,20 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: hj-api
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: "postgresql://neondb_owner:npg_mBH3r2FTpfWN@ep-bold-mode-aiojfvwv-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require"
+      REDIS_URL: "rediss://default:ARDuAAImcDI1ZmRkNmQxZTcxZjM0YTUxOTA1MTU0Zjk4ZTFhYjgxOHAyNDMzNA@darling-guppy-4334.upstash.io:6379"
+      NODE_ENV: development
+      PORT: "3001"
+      JWT_SECRET: dev-jwt-secret-change-in-prod
+      ENCRYPTION_SECRET: dev-encryption-secret-32chars!!
+      ENABLE_SIMULATOR: "true"
+      CORS_ORIGIN: "*"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-sk-your-key-here}"
+      PREFERRED_AI_MODEL: "${PREFERRED_AI_MODEL:-gpt5mini}"

@@ -1,0 +1,27 @@
+# Vercel will build on its own — never upload local build artifacts or caches.
+
+# Build outputs (rebuilt on Vercel)
+**/.next
+**/.turbo
+**/dist
+**/build
+**/coverage
+
+# Local dependencies (Vercel reinstalls)
+**/node_modules
+
+# TypeScript incremental build info
+**/tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Local-only files
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+*.log
+.DS_Store
+
+# Big PDFs that aren't needed at runtime
+*.pdf

@@ -1,0 +1,65 @@
+// Wearable Device Schema
+// Add these models to the main schema.prisma or use as a reference.
+// NOTE: Prisma does not natively support multi-file schemas.
+//       These models should be appended to packages/prisma/schema.prisma
+
+// ── Wearable Connection ──
+// Stores OAuth tokens and connection state for each user-device pairing.
+model WearableConnection {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  source        String    @db.VarChar(30)                     // apple_health, samsung_health, google_fit, etc.
+  accessToken   String?   @map("access_token") @db.Text       // encrypted at application layer
+  refreshToken  String?   @map("refresh_token") @db.Text      // encrypted at application layer
+  lastSyncAt    DateTime? @map("last_sync_at") @db.Timestamptz
+  isActive      Boolean   @default(true) @map("is_active")
+  deviceModel   String?   @map("device_model") @db.VarChar(200)
+  deviceOs      String?   @map("device_os") @db.VarChar(50)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  user     User              @relation(fields: [userId], references: [id])
+  syncLogs WearableSyncLog[]
+
+  @@unique([userId, source])
+  @@index([userId, isActive])
+  @@map("wearable_connections")
+}
+
+// ── Wearable Sync Log ──
+// Records each sync attempt: what was synced, how many records, success/failure.
+model WearableSyncLog {
+  id            String   @id @default(uuid()) @db.Uuid
+  connectionId  String   @map("connection_id") @db.Uuid
+  syncDate      DateTime @map("sync_date") @db.Timestamptz
+  dataTypes     String[] @map("data_types")                  // what was synced: ["heart_rate","steps","sleep"]
+  recordCount   Int      @map("record_count")
+  status        String   @db.VarChar(20)                     // success, partial, failed
+  errorMessage  String?  @map("error_message") @db.Text
+  durationMs    Int?     @map("duration_ms")                 // how long the sync took
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  connection WearableConnection @relation(fields: [connectionId], references: [id])
+
+  @@index([connectionId, createdAt])
+  @@index([status])
+  @@map("wearable_sync_logs")
+}
+
+// ── Wearable Data Point ──
+// Flexible storage for all wearable data types using JSON value column.
+// Indexed for efficient time-series queries per user and data type.
+model WearableDataPoint {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  source    String   @db.VarChar(30)                         // apple_health, samsung_health, google_fit
+  dataType  String   @map("data_type") @db.VarChar(30)       // heart_rate, steps, sleep, etc.
+  timestamp DateTime @db.Timestamptz
+  value     Json     @db.JsonB                               // flexible storage for different data types
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, dataType, timestamp])
+  @@index([userId, source, timestamp])
+  @@index([timestamp])
+  @@map("wearable_data_points")
+}

@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEALTH SAVIORS | Health Intelligence Protocol</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ====== CSS @property for animated gradients ====== */
+@property --gradient-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --hue-1 {
+  syntax: '<number>';
+  initial-value: 160;
+  inherits: false;
+}
+@property --hue-2 {
+  syntax: '<number>';
+  initial-value: 220;
+  inherits: false;
+}
+@property --shimmer-pos {
+  syntax: '<percentage>';
+  initial-value: -100%;
+  inherits: false;
+}
+
+:root {
+  --bg: #050a12;
+  --bg-card: rgba(13,21,37,0.6);
+  --accent: #00e87b;
+  --accent-glow: rgba(0,232,123,0.15);
+  --accent-gold: #f0a030;
+  --accent-gold-glow: rgba(240,160,48,0.15);
+  --text: #e8ecf4;
+  --text-dim: #8494a7;
+  --text-muted: #3a4a5c;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(0,232,123,0.2);
+  --glass: rgba(13,21,37,0.6);
+  --glass-border: rgba(255,255,255,0.06);
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:default;}
+
+/* ====== SCROLL PROGRESS BAR ====== */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-gold),#7c5cfc,var(--accent));background-size:300% 100%;animation:gradientShift 4s ease-in-out infinite;z-index:9999;width:0%;transition:width 0.1s linear;box-shadow:0 0 10px var(--accent),0 0 20px var(--accent-glow);}
+
+/* ====== ANIMATED MESH GRADIENT BG ====== */
+.mesh-bg{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden;}
+.mesh-bg::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:
+  radial-gradient(ellipse at 20% 50%, hsla(160,80%,40%,0.06) 0%, transparent 50%),
+  radial-gradient(ellipse at 80% 20%, hsla(30,80%,55%,0.05) 0%, transparent 50%),
+  radial-gradient(ellipse at 40% 80%, hsla(260,70%,50%,0.04) 0%, transparent 50%),
+  radial-gradient(ellipse at 70% 60%, hsla(200,80%,50%,0.03) 0%, transparent 50%);
+animation:meshMove 20s ease-in-out infinite alternate;}
+.mesh-bg::after{content:'';position:absolute;top:-30%;right:-30%;width:160%;height:160%;background:
+  radial-gradient(ellipse at 60% 40%, hsla(160,90%,50%,0.04) 0%, transparent 40%),
+  radial-gradient(ellipse at 30% 70%, hsla(40,80%,50%,0.03) 0%, transparent 40%);
+animation:meshMove2 25s ease-in-out infinite alternate;}
+@keyframes meshMove{0%{transform:translate(0,0) rotate(0deg);}100%{transform:translate(3%,-3%) rotate(3deg);}}
+@keyframes meshMove2{0%{transform:translate(0,0) rotate(0deg);}100%{transform:translate(-3%,3%) rotate(-2deg);}}
+
+/* Grain noise overlay */
+.grain{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:9998;opacity:0.018;}
+
+.container{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+/* ====== GLASS with 3D tilt ====== */
+.glass{background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);}
+.glass:hover{border-color:var(--border-hover);}
+
+/* ====== TILT CARD SYSTEM ====== */
+.tilt-card{position:relative;transform-style:preserve-3d;transition:transform 0.3s ease, box-shadow 0.3s ease;}
+.tilt-card:hover{box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 30px var(--accent-glow);}
+.tilt-card .card-glare{position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,0.12) 0%,transparent 60%);z-index:2;mix-blend-mode:overlay;}
+.tilt-card:hover .card-glare{opacity:1;}
+
+/* ====== GRADIENT TEXT MIXIN ====== */
+.gradient-text{background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradientShift 4s ease-in-out infinite;}
+.gradient-text-green{background-image:linear-gradient(135deg,#00e87b,#00c9a7,#00e87b);}
+.gradient-text-gold{background-image:linear-gradient(135deg,#f0a030,#ffd700,#f0a030);}
+.gradient-text-blue{background-image:linear-gradient(90deg,#3b9dff,#7c5cfc,#3b9dff);}
+.gradient-text-rainbow{background-image:linear-gradient(135deg,#00e87b,#3b9dff,#7c5cfc,#f0a030,#00e87b);background-size:300% 300%;}
+
+/* Glow text for stats */
+.glow-text{text-shadow:0 0 20px currentColor,0 0 40px currentColor;}
+
+/* ====== ROTATING GRADIENT BORDER ====== */
+@keyframes rotateBorder{0%{--gradient-angle:0deg;}100%{--gradient-angle:360deg;}}
+.gradient-border{position:relative;overflow:visible;}
+.gradient-border::before{content:'';position:absolute;inset:-2px;border-radius:calc(var(--radius-lg) + 2px);background:conic-gradient(from var(--gradient-angle),var(--accent),var(--accent-gold),#7c5cfc,#3b9dff,var(--accent));animation:rotateBorder 4s linear infinite;z-index:-1;opacity:0;transition:opacity 0.4s;}
+.gradient-border:hover::before{opacity:0.8;}
+.gradient-border::after{content:'';position:absolute;inset:0;background:var(--bg);border-radius:var(--radius-lg);z-index:-1;}
+
+/* ====== SHIMMER SWEEP ====== */
+@keyframes shimmerSweep{0%{--shimmer-pos:-100%;}100%{--shimmer-pos:200%;}}
+.shimmer-card{position:relative;overflow:hidden;}
+.shimmer-card::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.03) 45%,rgba(255,255,255,0.06) 50%,rgba(255,255,255,0.03) 55%,transparent 60%);transform:translateX(var(--shimmer-pos,-100%));animation:shimmerSweepKF 4s ease-in-out infinite;pointer-events:none;border-radius:inherit;}
+@keyframes shimmerSweepKF{0%{transform:translateX(-100%);}100%{transform:translateX(200%);}}
+
+/* ====== FLOATING PARTICLES (CSS only) ====== */
+.particles{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.particle{position:absolute;border-radius:50%;opacity:0;animation:particleFloat linear infinite;}
+@keyframes particleFloat{
+  0%{opacity:0;transform:translateY(100vh) scale(0);}
+  10%{opacity:0.6;}
+  90%{opacity:0.6;}
+  100%{opacity:0;transform:translateY(-20vh) scale(1);}
+}
+
+/* ====== SECTION DECORATIVE BGs ====== */
+.section-bg-dots{background-image:radial-gradient(rgba(255,255,255,0.03) 1px,transparent 1px);background-size:24px 24px;}
+.section-bg-lines{background-image:repeating-linear-gradient(90deg,transparent,transparent 59px,rgba(255,255,255,0.02) 59px,rgba(255,255,255,0.02) 60px),
+  repeating-linear-gradient(0deg,transparent,transparent 59px,rgba(255,255,255,0.02) 59px,rgba(255,255,255,0.02) 60px);}
+.section-bg-geo{position:relative;}
+.section-bg-geo::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(circle at 10% 20%,rgba(0,232,123,0.03) 0%,transparent 30%),
+  radial-gradient(circle at 90% 80%,rgba(240,160,48,0.03) 0%,transparent 30%);pointer-events:none;}
+
+/* ====== ANIMATED DIVIDERS ====== */
+.section-divider{height:2px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent-gold),#7c5cfc,transparent);background-size:200% 100%;animation:dividerGlow 3s ease-in-out infinite alternate;margin:0;border:none;opacity:0.4;}
+@keyframes dividerGlow{0%{background-position:0% 50%;opacity:0.3;}100%{background-position:100% 50%;opacity:0.6;}}
+
+/* ====== DECORATIVE SVG SHAPES ====== */
+.deco-shapes{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.deco-shape{position:absolute;opacity:0.04;animation:decoFloat 15s ease-in-out infinite;}
+.deco-shape:nth-child(2){animation-delay:-5s;animation-duration:20s;}
+.deco-shape:nth-child(3){animation-delay:-10s;animation-duration:18s;}
+@keyframes decoFloat{0%,100%{transform:translate(0,0) rotate(0deg);}25%{transform:translate(10px,-15px) rotate(5deg);}50%{transform:translate(-5px,10px) rotate(-3deg);}75%{transform:translate(15px,5px) rotate(3deg);}}
+
+/* ====== BUTTON EFFECTS ====== */
+.btn-primary,.btn-secondary,.nav-btn{position:relative;overflow:hidden;}
+.btn-primary::before,.nav-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--ripple-x,50%) var(--ripple-y,50%),rgba(255,255,255,0.3) 0%,transparent 60%);transform:scale(0);transition:transform 0.5s;border-radius:inherit;}
+.btn-primary:active::before,.nav-btn:active::before{transform:scale(2.5);transition:transform 0s;}
+.btn-primary::after{content:'';position:absolute;inset:-2px;border-radius:inherit;background:var(--accent);opacity:0;filter:blur(15px);transition:opacity 0.3s;z-index:-1;}
+.btn-primary:hover::after{opacity:0.4;}
+
+/* Link underline animation */
+.animated-link{position:relative;text-decoration:none !important;}
+.animated-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:currentColor;transition:width 0.3s ease;}
+.animated-link:hover::after{width:100%;}
+
+/* ====== NAV ====== */
+nav{position:fixed;top:3px;left:0;right:0;z-index:100;height:64px;border-bottom:1px solid var(--border);padding:0 24px;transition:background 0.4s,backdrop-filter 0.4s;}
+nav.scrolled{background:rgba(5,10,18,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo .brand{font-family:'Inter',sans-serif;font-weight:700;font-size:16px;color:var(--text);letter-spacing:0.5px;}
+.nav-logo .logo-icon{width:30px;height:30px;border:2px solid var(--accent);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--accent);box-shadow:0 0 10px var(--accent-glow);}
+.nav-logo .badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);background:rgba(0,232,123,0.1);padding:2px 6px;border-radius:4px;letter-spacing:1px;font-weight:600;}
+.nav-links{display:flex;gap:24px;list-style:none;align-items:center;}
+.nav-links a{color:var(--text-dim);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s;position:relative;padding-bottom:4px;}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:3px;background:var(--accent);border-radius:3px;transition:width 0.3s;box-shadow:0 0 6px var(--accent);}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%;}
+.nav-links a.gold{color:var(--accent-gold);}
+.nav-links a.gold:hover{color:var(--accent-gold);opacity:0.8;}
+.nav-links a.gold::after{background:var(--accent-gold);box-shadow:0 0 6px var(--accent-gold);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-status{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite;box-shadow:0 0 8px var(--accent);flex-shrink:0;}
+.status-dot.gold{background:var(--accent-gold);box-shadow:0 0 8px var(--accent-gold);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.nav-btn{background:var(--accent);color:var(--bg);border:none;padding:10px 24px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.nav-btn:hover{box-shadow:0 0 24px var(--accent-glow),0 0 48px var(--accent-glow);transform:translateY(-1px);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.hamburger span{width:22px;height:2px;background:var(--text-dim);border-radius:2px;transition:all 0.3s;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(5,10,18,0.95);backdrop-filter:blur(20px);padding:24px;border-bottom:1px solid var(--border);z-index:99;}
+.mobile-menu.open{display:block;}
+.mobile-menu a{display:block;padding:12px 0;color:var(--text-dim);text-decoration:none;font-size:15px;border-bottom:1px solid var(--border);}
+@media(max-width:900px){
+  .nav-links,.nav-status{display:none !important;}
+  .hamburger{display:flex;}
+}
+
+/* ====== HERO ====== */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:80px;position:relative;}
+.hero-shapes{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;}
+.hero-shape{position:absolute;border-radius:50%;opacity:0.05;filter:blur(80px);}
+.hero-shape.s1{width:500px;height:500px;background:var(--accent);top:10%;right:5%;animation:float1 20s ease-in-out infinite;}
+.hero-shape.s2{width:400px;height:400px;background:var(--accent-gold);bottom:10%;left:10%;animation:float2 25s ease-in-out infinite;}
+.hero-shape.s3{width:300px;height:300px;background:#7c5cfc;top:50%;left:40%;animation:float3 18s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,20px);}}
+@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(20px,-30px);}}
+@keyframes float3{0%,100%{transform:translate(0,0);}50%{transform:translate(-20px,-20px);}}
+.hero-title{font-size:72px;font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:24px;}
+.hero-title .line1{color:var(--text);}
+.hero-title .line2{background:linear-gradient(135deg,#00e87b,#00c9a7,#3b9dff);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease-in-out infinite;text-shadow:none;}
+@keyframes gradientShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.hero-sub{font-size:18px;color:var(--text-dim);max-width:600px;line-height:1.7;margin-bottom:40px;}
+.hero-sub strong{color:var(--accent);font-weight:600;}
+.hero-actions{display:flex;gap:16px;margin-bottom:60px;flex-wrap:wrap;}
+.btn-primary{background:var(--accent);color:var(--bg);border:none;padding:16px 36px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;text-decoration:none;box-shadow:0 0 20px var(--accent-glow);}
+.btn-primary:hover{box-shadow:0 0 30px var(--accent-glow),0 0 60px var(--accent-glow);transform:translateY(-2px) scale(1.02);}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid var(--border);padding:16px 36px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;}
+.btn-secondary:hover{border-color:var(--border-hover);color:var(--accent);transform:translateY(-2px);box-shadow:0 0 20px var(--accent-glow);}
+
+/* Live stats bar */
+.live-stats{display:flex;gap:40px;padding:24px 32px;border-radius:var(--radius-lg);background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);font-family:'JetBrains Mono',monospace;}
+.live-stat{display:flex;flex-direction:column;gap:4px;position:relative;}
+.live-stat+.live-stat::before{content:'';position:absolute;left:-20px;top:4px;bottom:4px;width:1px;background:var(--border);}
+.live-stat-value{font-size:28px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;text-shadow:0 0 20px var(--accent-glow),0 0 40px rgba(0,232,123,0.1);}
+.live-stat-value.gold{color:var(--accent-gold);text-shadow:0 0 20px var(--accent-gold-glow),0 0 40px rgba(240,160,48,0.1);}
+.live-stat-label{font-size:10px;color:var(--text-dim);letter-spacing:2px;}
+
+/* ====== SECTIONS ====== */
+.section{padding:100px 0;position:relative;}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:4px;margin-bottom:16px;font-weight:500;}
+.section-title{font-size:42px;font-weight:800;letter-spacing:-1px;margin-bottom:12px;}
+.section-desc{font-size:16px;color:var(--text-dim);max-width:600px;margin-bottom:48px;line-height:1.6;}
+.section-desc a{color:var(--accent);text-decoration:none;}
+.section-desc a:hover{text-decoration:underline;}
+
+/* ====== MARQUEE ====== */
+.marquee-container{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;position:relative;}
+.marquee-container::before,.marquee-container::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;}
+.marquee-container::before{left:0;background:linear-gradient(90deg,var(--bg),transparent);}
+.marquee-container::after{right:0;background:linear-gradient(270deg,var(--bg),transparent);}
+.marquee{display:flex;animation:marquee 40s linear infinite;gap:12px;white-space:nowrap;will-change:transform;}
+.marquee-container:hover .marquee{animation-play-state:paused;}
+.marquee-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--glass);border:1px solid var(--glass-border);border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);backdrop-filter:blur(10px);flex-shrink:0;}
+@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* ====== CHAT UI ====== */
+.chat-mockup{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+.chat-header{display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;}
+.chat-header .session-id{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);margin-left:auto;}
+.chat-body{padding:24px;display:flex;flex-direction:column;gap:16px;max-height:none;}
+.chat-bubble{max-width:85%;padding:14px 18px;border-radius:var(--radius-md);font-size:13px;line-height:1.6;}
+.chat-bubble.user{align-self:flex-end;background:rgba(0,232,123,0.1);border:1px solid rgba(0,232,123,0.15);color:var(--text);}
+.chat-bubble.agent{align-self:flex-start;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text-dim);display:flex;gap:12px;align-items:flex-start;}
+.agent-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;color:#fff;}
+.chat-bubble.system{align-self:center;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);padding:8px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:20px;}
+.chat-bubble .earn{display:inline-block;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:rgba(0,232,123,0.08);padding:4px 10px;border-radius:4px;}
+
+/* Agent Cards with gradient border */
+.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.agent-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:24px;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);transform-style:preserve-3d;}
+.agent-card:hover{transform:translateY(-4px) scale(1.02);border-color:var(--border-hover);box-shadow:0 12px 40px rgba(0,0,0,0.4),0 0 30px var(--accent-glow);}
+.agent-card .card-glare{position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,0.1) 0%,transparent 60%);z-index:2;mix-blend-mode:overlay;}
+.agent-card:hover .card-glare{opacity:1;}
+.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0.6;}
+.agent-card.coach::before{background:linear-gradient(90deg,var(--accent),transparent);}
+.agent-card.nutrition::before{background:linear-gradient(90deg,var(--accent-gold),transparent);}
+.agent-card.sleep::before{background:linear-gradient(90deg,#7c5cfc,transparent);}
+.agent-card.mental::before{background:linear-gradient(90deg,#3b9dff,transparent);}
+.agent-card.moderator::before{background:linear-gradient(90deg,var(--text),transparent);}
+.agent-card.triage::before{background:linear-gradient(90deg,#ff4466,transparent);}
+.agent-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.agent-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.agent-name .icon-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 12px rgba(255,255,255,0.1);}
+.agent-status{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;letter-spacing:1px;}
+.agent-status.active{background:rgba(0,232,123,0.1);color:var(--accent);border:1px solid rgba(0,232,123,0.15);}
+.agent-status.premium{background:rgba(240,160,48,0.1);color:var(--accent-gold);border:1px solid rgba(240,160,48,0.15);}
+.agent-desc{font-size:13px;color:var(--text-dim);line-height:1.6;}
+/* ====== ARCHITECTURE ====== */
+.arch-flow{display:flex;flex-direction:column;gap:0;margin:40px 0;position:relative;}
+.arch-layer{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);padding:36px 40px;position:relative;border-radius:0;transition:all 0.3s;}
+.arch-layer:first-child{border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+.arch-layer:last-child{border-radius:0 0 var(--radius-lg) var(--radius-lg);}
+.arch-layer:hover{border-color:var(--border-hover);box-shadow:0 0 30px var(--accent-glow);}
+.arch-layer .bg-num{position:absolute;right:32px;top:50%;transform:translateY(-50%);font-size:120px;font-weight:900;color:rgba(255,255,255,0.02);pointer-events:none;line-height:1;}
+.arch-layer-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:3px;margin-bottom:8px;}
+.arch-layer-title{font-size:20px;font-weight:800;margin-bottom:8px;}
+.arch-layer-desc{font-size:13px;color:var(--text-dim);line-height:1.6;max-width:700px;}
+.arch-connector{display:flex;justify-content:center;padding:4px 0;position:relative;z-index:2;}
+.arch-connector svg{width:40px;height:24px;}
+.arch-layer.highlight{border-color:var(--border-hover);background:linear-gradient(135deg,rgba(0,232,123,0.04),transparent);}
+.key-principle{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);text-align:center;padding:40px;margin-top:32px;position:relative;overflow:hidden;}
+.key-principle::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,232,123,0.04) 0%,transparent 70%);pointer-events:none;}
+.key-principle h3{font-size:20px;font-weight:700;color:var(--accent);margin-bottom:8px;letter-spacing:1px;text-shadow:0 0 30px var(--accent-glow);}
+.key-principle p{font-size:14px;color:var(--text-dim);line-height:1.6;position:relative;}
+
+/* ====== AGENT ECONOMY ====== */
+.code-editor{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);overflow:hidden;margin:40px 0;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;}
+.code-method{padding:4px 12px;border-radius:var(--radius-sm);font-weight:700;font-size:11px;}
+.code-method.post{background:rgba(0,232,123,0.1);color:var(--accent);}
+.code-endpoint{color:var(--text-dim);}
+.code-payment{color:var(--accent-gold);display:flex;align-items:center;gap:6px;}
+.code-copy{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text-dim);padding:4px 12px;border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;transition:all 0.2s;}
+.code-copy:hover{border-color:var(--border-hover);color:var(--accent);}
+.code-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9;}
+.code-lines{padding:20px 0;padding-left:16px;padding-right:12px;color:var(--text-muted);text-align:right;user-select:none;border-right:1px solid var(--border);min-width:44px;}
+.code-content{padding:20px;flex:1;overflow-x:auto;}
+.api-key{color:var(--accent-gold);}
+.api-val{color:var(--text);}
+.api-comment{color:var(--text-muted);}
+.api-req{color:#3b9dff;font-weight:700;}
+.api-res{color:var(--accent);font-weight:700;}
+.api-str{color:#f472b6;}
+.api-num{color:#fbbf24;}
+.api-bool{color:#a78bfa;}
+
+/* Pricing cards for agent economy */
+.pricing-cards-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.econ-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:28px 24px;position:relative;overflow:hidden;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);transform-style:preserve-3d;}
+.econ-card:hover{transform:translateY(-4px) scale(1.02);border-color:var(--border-hover);box-shadow:0 12px 40px rgba(0,0,0,0.3),0 0 20px var(--accent-glow);}
+.econ-card .top-edge{position:absolute;top:0;left:0;right:0;height:4px;}
+.econ-card .top-edge.green{background:linear-gradient(90deg,var(--accent),transparent);}
+.econ-card .top-edge.gold{background:linear-gradient(90deg,var(--accent-gold),transparent);}
+.econ-card .top-edge.blue{background:linear-gradient(90deg,#3b9dff,transparent);}
+.econ-card .card-glare{position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,0.08) 0%,transparent 60%);z-index:2;}
+.econ-card:hover .card-glare{opacity:1;}
+
+/* ====== TOKEN ====== */
+.token-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.token-stat{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:24px;text-align:center;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;overflow:hidden;}
+.token-stat:hover{border-color:var(--border-hover);transform:translateY(-4px) scale(1.02);box-shadow:0 12px 40px rgba(0,0,0,0.3);}
+.token-stat::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center bottom,rgba(240,160,48,0.05) 0%,transparent 70%);pointer-events:none;}
+.token-stat-icon{font-size:20px;margin-bottom:8px;color:var(--accent-gold);font-family:'JetBrains Mono',monospace;}
+.token-stat-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:800;color:var(--accent-gold);margin-bottom:4px;text-shadow:0 0 20px var(--accent-gold-glow),0 0 40px rgba(240,160,48,0.1);animation:glowPulse 3s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 20px var(--accent-gold-glow),0 0 40px rgba(240,160,48,0.1);}50%{text-shadow:0 0 30px var(--accent-gold-glow),0 0 60px rgba(240,160,48,0.15);}}
+.token-stat-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:2px;}
+.token-lists{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.token-list-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);overflow:hidden;}
+.token-list-header{padding:16px 24px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.token-list-body{padding:8px 24px;}
+.token-list-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;color:var(--text-dim);}
+.token-list-item:last-child{border-bottom:none;}
+.token-list-item .mark{font-size:14px;flex-shrink:0;width:20px;text-align:center;}
+.token-list-item .mark.green{color:var(--accent);}
+.token-list-item .mark.red{color:#ff4466;}
+.token-list-item .val{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);margin-right:4px;}
+/* Flywheel */
+.flywheel{display:flex;align-items:center;gap:0;margin-top:16px;overflow-x:auto;padding:16px 0;}
+.flywheel-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:16px 20px;text-align:center;font-size:13px;font-weight:600;min-width:130px;flex-shrink:0;position:relative;transition:all 0.3s;}
+.flywheel-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.flywheel-arrow{color:var(--text-muted);font-size:18px;padding:0 4px;flex-shrink:0;}
+
+/* ====== PRICING ====== */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.price-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:36px 28px;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);position:relative;overflow:hidden;transform-style:preserve-3d;}
+.price-card:hover{transform:translateY(-6px) scale(1.02);border-color:var(--border-hover);box-shadow:0 16px 48px rgba(0,0,0,0.4),0 0 30px var(--accent-glow);}
+.price-card .card-glare{position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,0.1) 0%,transparent 60%);z-index:2;mix-blend-mode:overlay;}
+.price-card:hover .card-glare{opacity:1;}
+.price-card.featured{position:relative;overflow:visible;}
+.price-card.featured::before{content:'';position:absolute;inset:-2px;border-radius:calc(var(--radius-lg) + 2px);background:conic-gradient(from var(--gradient-angle),var(--accent),var(--accent-gold),#7c5cfc,#3b9dff,var(--accent));background-size:100% 100%;animation:rotateBorder 4s linear infinite;z-index:-1;}
+.price-card.featured::after{content:'';position:absolute;inset:0;background:var(--bg);border-radius:var(--radius-lg);z-index:-1;}
+/* Inner glow for pricing cards */
+.price-card-glow{position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at center,rgba(0,232,123,0.03) 0%,transparent 70%);z-index:0;}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),#00c9a7);color:var(--bg);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:4px 16px;border-radius:20px;letter-spacing:2px;z-index:2;box-shadow:0 0 20px var(--accent-glow);}
+.price-tier{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--text-dim);margin-bottom:8px;position:relative;}
+.price-amount{font-size:40px;font-weight:800;margin-bottom:4px;position:relative;}
+.price-amount span{font-size:16px;color:var(--text-dim);font-weight:400;}
+.price-period{font-size:12px;color:var(--text-dim);margin-bottom:24px;position:relative;}
+.price-features{list-style:none;font-size:13px;color:var(--text-dim);position:relative;}
+.price-features li{padding:8px 0;display:flex;align-items:center;gap:10px;}
+.price-features .check{color:var(--accent);font-weight:700;}
+.price-features .lock{color:var(--text-muted);}
+
+/* ====== ROADMAP ====== */
+.roadmap{position:relative;padding-left:48px;}
+.roadmap-line{position:absolute;left:18px;top:0;bottom:0;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--accent),var(--accent-gold),#7c5cfc);opacity:0.3;}
+.roadmap-item{position:relative;margin-bottom:24px;padding:28px 32px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);transition:all 0.3s;}
+.roadmap-item:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+.roadmap-dot{position:absolute;left:-39px;top:32px;width:14px;height:14px;border-radius:50%;border:3px solid var(--accent);background:var(--bg);}
+.roadmap-item.active .roadmap-dot{background:var(--accent);box-shadow:0 0 12px var(--accent),0 0 24px var(--accent-glow);animation:pulseGlow 2s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 12px var(--accent),0 0 24px var(--accent-glow);}50%{box-shadow:0 0 20px var(--accent),0 0 40px var(--accent-glow);}}
+.roadmap-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;font-weight:500;}
+.roadmap-title{font-size:18px;font-weight:700;margin-bottom:8px;}
+.roadmap-desc{font-size:13px;color:var(--text-dim);line-height:1.6;}
+
+/* ====== PLAYGROUND ====== */
+.playground-wrap{max-width:720px;margin:0 auto;}
+.playground-queries{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.playground-query{padding:8px 16px;border:1px solid var(--border);background:rgba(255,255,255,0.02);color:var(--text-dim);border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all 0.2s;}
+.playground-query:hover,.playground-query.active{border-color:var(--accent);color:var(--accent);background:rgba(0,232,123,0.05);}
+.playground-loading{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;align-items:center;gap:10px;}
+/* Loading bar instead of spinner */
+.loading-bar-wrap{width:200px;height:4px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;}
+.loading-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-gold));border-radius:4px;animation:loadingBar 2s ease-in-out;}
+@keyframes loadingBar{0%{width:0%;}50%{width:70%;}100%{width:100%;}}
+.spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ====== REGISTRY ====== */
+.reg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.reg-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:20px;transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);cursor:pointer;text-decoration:none;display:block;transform-style:preserve-3d;position:relative;overflow:hidden;}
+.reg-card:hover{border-color:var(--border-hover);transform:translateY(-4px) scale(1.02);box-shadow:0 12px 36px rgba(0,0,0,0.3),0 0 20px var(--accent-glow);}
+.reg-card .card-glare{position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,0.08) 0%,transparent 60%);z-index:2;}
+.reg-card:hover .card-glare{opacity:1;}
+.reg-card-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#fff;margin-bottom:2px;display:flex;align-items:center;gap:8px;}
+.reg-card-name .initials{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.reg-card-addr{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(0,232,123,0.4);margin-bottom:8px;padding-left:32px;}
+.reg-card-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;}
+.reg-card-status{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1px;}
+.reg-card-stats{display:flex;gap:12px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);}
+
+/* ====== LEADERBOARD ====== */
+.lb-wrap{max-width:740px;margin:0 auto;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.3);}
+.lb-header{display:grid;grid-template-columns:44px 1fr 110px 110px 80px;padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:1px;border-bottom:1px solid var(--border);}
+.lb-row{display:grid;grid-template-columns:44px 1fr 110px 110px 80px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.03);font-family:'JetBrains Mono',monospace;font-size:12px;transition:all 0.2s;align-items:center;}
+.lb-row:last-child{border-bottom:none;}
+.lb-row:hover{background:rgba(0,232,123,0.03);transform:translateX(4px);}
+.lb-rank{font-weight:800;display:flex;align-items:center;justify-content:center;}
+.lb-rank-badge{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--bg);}
+.lb-rank-badge.gold{background:linear-gradient(135deg,#f0a030,#ffd700);box-shadow:0 0 12px rgba(255,215,0,0.3);}
+.lb-rank-badge.silver{background:linear-gradient(135deg,#8494a7,#c0c0c0);}
+.lb-rank-badge.bronze{background:linear-gradient(135deg,#cd7f32,#e6a860);}
+.lb-name{color:#fff;font-weight:600;display:flex;align-items:center;gap:8px;}
+.lb-name .initials{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;}
+.lb-addr{font-size:9px;color:rgba(0,232,123,0.4);}
+.lb-val{text-align:right;color:var(--text-dim);}
+.lb-uptime{text-align:right;}
+.lb-mini-chart{display:inline-flex;align-items:flex-end;gap:1px;height:16px;margin-left:8px;}
+.lb-mini-chart span{width:3px;background:var(--accent);border-radius:1px;opacity:0.5;transition:opacity 0.3s;}
+.lb-row:hover .lb-mini-chart span{opacity:1;}
+.lb-sparkline{display:inline-flex;align-items:flex-end;gap:1px;height:20px;margin-left:8px;}
+.lb-sparkline span{width:3px;border-radius:1px;transition:all 0.3s;min-height:2px;}
+
+/* ====== CTA ====== */
+.cta-section{text-align:center;padding:120px 0;position:relative;overflow:hidden;}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,var(--accent-glow) 0%,rgba(0,232,123,0.05) 30%,transparent 70%);pointer-events:none;animation:ctaPulse 4s ease-in-out infinite;}
+@keyframes ctaPulse{0%,100%{opacity:0.6;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}}
+/* Radial burst lines */
+.cta-burst{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;pointer-events:none;}
+.cta-burst-line{position:absolute;top:50%;left:50%;width:200px;height:1px;transform-origin:left center;opacity:0.06;}
+.cta-title{font-size:48px;font-weight:900;margin-bottom:16px;letter-spacing:-1px;position:relative;}
+.cta-desc{font-size:16px;color:var(--text-dim);margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6;position:relative;}
+
+/* ====== FOOTER ====== */
+.footer-wave{position:relative;height:60px;overflow:hidden;}
+.footer-wave svg{position:absolute;bottom:0;width:100%;height:60px;}
+footer{position:relative;padding:48px 0 32px;background:rgba(5,8,15,0.8);}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand .logo{font-family:'Inter',sans-serif;font-weight:700;font-size:16px;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.footer-brand p{font-size:13px;color:var(--text-dim);line-height:1.6;max-width:280px;}
+.footer-col h4{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:2px;margin-bottom:16px;}
+.footer-col a{display:block;color:var(--text-dim);text-decoration:none;font-size:13px;padding:4px 0;transition:all 0.2s;position:relative;}
+.footer-col a:hover{color:var(--accent);transform:translateX(4px);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);}
+.footer-socials{display:flex;gap:16px;}
+.footer-socials a{color:var(--text-dim);transition:all 0.3s;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid transparent;}
+.footer-socials a:hover{transform:translateY(-2px);}
+.footer-socials a.twitter:hover{color:#1DA1F2;border-color:rgba(29,161,242,0.3);box-shadow:0 0 15px rgba(29,161,242,0.2);}
+.footer-socials a.discord:hover{color:#5865F2;border-color:rgba(88,101,242,0.3);box-shadow:0 0 15px rgba(88,101,242,0.2);}
+.footer-socials a.telegram:hover{color:#0088cc;border-color:rgba(0,136,204,0.3);box-shadow:0 0 15px rgba(0,136,204,0.2);}
+.footer-socials a.github:hover{color:#fff;border-color:rgba(255,255,255,0.2);box-shadow:0 0 15px rgba(255,255,255,0.1);}
+.footer-socials svg{width:18px;height:18px;}
+
+/* ====== SCROLL ANIMATIONS ====== */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease-out,transform 0.6s ease-out;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+.reveal-delay-4{transition-delay:0.4s;}
+.reveal-delay-5{transition-delay:0.5s;}
+
+/* ====== AMBIENT SECTION GLOWS ====== */
+.section-glow{position:absolute;pointer-events:none;border-radius:50%;filter:blur(120px);z-index:0;}
+
+/* ====== RESPONSIVE ====== */
+@media(max-width:900px){
+  .hero-title{font-size:42px;}
+  .live-stats{flex-wrap:wrap;gap:24px;}
+  .live-stat+.live-stat::before{display:none;}
+  .agent-grid{grid-template-columns:1fr;}
+  .pricing-grid,.pricing-cards-row,.token-stats,.token-lists,.footer-grid{grid-template-columns:1fr;}
+  .reg-grid{grid-template-columns:1fr;}
+  .lb-header,.lb-row{grid-template-columns:30px 1fr 80px 80px 60px;font-size:10px;}
+  .lb-mini-chart,.lb-sparkline{display:none;}
+  .flywheel{flex-wrap:wrap;justify-content:center;}
+  .section{padding:60px 0;}
+  .arch-layer .bg-num{font-size:60px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .particles{display:none;}
+  .deco-shapes{display:none;}
+}
+@media(max-width:480px){
+  .hero-title{font-size:32px;}
+  .section-title{font-size:28px;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .hero-actions{flex-direction:column;width:100%;}
+  .btn-primary,.btn-secondary{width:100%;justify-content:center;}
+}
+</style>
+</head>
+<body>
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Grain SVG filter -->
+<svg style="position:fixed;width:0;height:0;">
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+</svg>
+<div class="grain" style="filter:url(#grain);"></div>
+<div class="mesh-bg"></div>
+
+<!-- ====== NAV ====== -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-icon">$H</div>
+      <span class="brand">Health Saviors</span>
+      <span class="badge">H2E</span>
+    </a>
+    <ul class="nav-links">
+      <a href="#agents">Agents</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#agent-economy">Agent API</a>
+      <a href="https://web-theta-ecru-90.vercel.app/pricing">Pricing</a>
+      <a href="https://web-theta-ecru-90.vercel.app/api-pricing">API Pricing</a>
+      <a href="https://web-theta-ecru-90.vercel.app/enterprise" class="gold">Enterprise</a>
+    </ul>
+    <div class="nav-right">
+      <div class="nav-status">
+        <span class="status-dot"></span> PROTOCOL LIVE
+      </div>
+      <a href="https://web-theta-ecru-90.vercel.app/chat" class="nav-btn">Launch App</a>
+      <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#agents" onclick="this.parentElement.classList.remove('open')">Agents</a>
+  <a href="#architecture" onclick="this.parentElement.classList.remove('open')">Architecture</a>
+  <a href="#agent-economy" onclick="this.parentElement.classList.remove('open')">Agent API</a>
+  <a href="https://web-theta-ecru-90.vercel.app/pricing">Pricing</a>
+  <a href="https://web-theta-ecru-90.vercel.app/api-pricing">API Pricing</a>
+  <a href="https://web-theta-ecru-90.vercel.app/enterprise" style="color:var(--accent-gold);">Enterprise</a>
+  <a href="https://web-theta-ecru-90.vercel.app/chat" style="color:var(--accent);font-weight:600;">Launch App</a>
+</div>
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+  <div class="hero-shapes">
+    <div class="hero-shape s1"></div>
+    <div class="hero-shape s2"></div>
+    <div class="hero-shape s3"></div>
+  </div>
+  <!-- Floating particles -->
+  <div class="particles" id="heroParticles"></div>
+  <div class="container">
+    <h1 class="hero-title reveal">
+      <span class="line1">Your Health Data</span><br>
+      <span class="line2">Trains the Intelligence.</span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-1">
+      Multi-agent AI panel analyzes your wellness. Data stays inside.
+      Only <strong>intelligence goes out</strong> &mdash; sold to AI agents via x402.
+      You earn <strong>$H2E</strong> for every contribution.
+    </p>
+    <div class="hero-actions reveal reveal-delay-2">
+      <a href="https://web-theta-ecru-90.vercel.app/chat" class="btn-primary">Launch App &rarr;</a>
+      <a href="#architecture" class="btn-secondary">View Architecture</a>
+    </div>
+    <div class="live-stats reveal reveal-delay-3">
+      <div class="live-stat">
+        <div class="live-stat-value" id="counter-users">0</div>
+        <div class="live-stat-label">HEALTH SAVIORS</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value gold" id="counter-agents">0</div>
+        <div class="live-stat-label">AGENTS QUERYING</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value" id="counter-queries">0</div>
+        <div class="live-stat-label">QUERIES TODAY</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value gold" id="counter-earned">0</div>
+        <div class="live-stat-label">H2E DISTRIBUTED</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MARQUEE ====== -->
+<div class="marquee-container">
+  <div class="marquee">
+    <div class="marquee-pill"><span class="status-dot"></span> INSURANCE_AGENT_0x7a queried sleep patterns</div>
+    <div class="marquee-pill"><span class="status-dot gold"></span> PHARMA_AGENT_0x3f purchased headache correlation dataset</div>
+    <div class="marquee-pill"><span class="status-dot"></span> FITNESS_AGENT_0xb2 accessed exercise effectiveness model</div>
+    <div class="marquee-pill"><span class="status-dot gold"></span> DEFI_AGENT_0x9c queried health risk scores</div>
+    <div class="marquee-pill"><span class="status-dot"></span> TRIAGE_AGENT flagged emergency pattern in user_0x4d</div>
+    <div class="marquee-pill"><span class="status-dot"></span> RESEARCH_AGENT_0x1a accessed synthetic wellness dataset</div>
+    <div class="marquee-pill"><span class="status-dot gold"></span> x402 payment confirmed: 0.05 USDC from NUTRITION_AGENT_0xe7</div>
+    <div class="marquee-pill"><span class="status-dot"></span> INSURANCE_AGENT_0x7a queried sleep patterns</div>
+    <div class="marquee-pill"><span class="status-dot gold"></span> PHARMA_AGENT_0x3f purchased headache correlation dataset</div>
+    <div class="marquee-pill"><span class="status-dot"></span> FITNESS_AGENT_0xb2 accessed exercise effectiveness model</div>
+    <div class="marquee-pill"><span class="status-dot gold"></span> DEFI_AGENT_0x9c queried health risk scores</div>
+    <div class="marquee-pill"><span class="status-dot"></span> TRIAGE_AGENT flagged emergency pattern in user_0x4d</div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== HOW IT WORKS (Chat UI) ====== -->
+<div class="section section-bg-dots" id="agents" style="position:relative;">
+  <!-- Ambient glow for this section -->
+  <div class="section-glow" style="width:600px;height:600px;background:rgba(0,232,123,0.04);top:-10%;right:-10%;"></div>
+  <!-- Decorative shapes -->
+  <div class="deco-shapes">
+    <svg class="deco-shape" style="top:5%;right:8%;width:120px;height:120px;" viewBox="0 0 120 120"><circle cx="60" cy="60" r="55" stroke="var(--accent)" stroke-width="1" fill="none" opacity="0.5"/></svg>
+    <svg class="deco-shape" style="bottom:10%;left:5%;width:80px;height:80px;" viewBox="0 0 80 80"><polygon points="40,5 75,25 75,65 40,85 5,65 5,25" stroke="var(--accent-gold)" stroke-width="1" fill="none" opacity="0.5"/></svg>
+    <svg class="deco-shape" style="top:40%;left:2%;width:60px;height:60px;" viewBox="0 0 60 60"><rect x="5" y="5" width="50" height="50" rx="5" stroke="#7c5cfc" stroke-width="1" fill="none" opacity="0.5" transform="rotate(15 30 30)"/></svg>
+  </div>
+  <div class="container">
+    <div class="section-label reveal">// HOW IT WORKS</div>
+    <div class="section-title reveal reveal-delay-1">Multi-Agent <span class="gradient-text gradient-text-green">AI Panel</span></div>
+    <div class="section-desc reveal reveal-delay-2">Your health input is analyzed by multiple specialized AI agents simultaneously. They debate, cross-reference, and synthesize &mdash; like a board of wellness experts.</div>
+
+    <div class="chat-mockup reveal">
+      <div class="chat-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        AI Health Panel
+        <span class="session-id">Session #48,291</span>
+      </div>
+      <div class="chat-body">
+        <div class="chat-bubble user">"I've had headaches for 3 days and can't sleep well"</div>
+        <div class="chat-bubble system">Routing to 4 agents in parallel...</div>
+        <div class="chat-bubble agent">
+          <div class="agent-icon" style="background:var(--accent);">CO</div>
+          <div><strong style="color:var(--accent);font-size:11px;">COACH</strong><br>Regular aerobic exercise reduces headache frequency by 40%. Recommend 30-min daily walks.</div>
+        </div>
+        <div class="chat-bubble agent">
+          <div class="agent-icon" style="background:var(--accent-gold);">NU</div>
+          <div><strong style="color:var(--accent-gold);font-size:11px;">NUTRITION</strong><br>Magnesium deficiency correlates with headache + insomnia. Add nuts, bananas, leafy greens.</div>
+        </div>
+        <div class="chat-bubble agent">
+          <div class="agent-icon" style="background:#7c5cfc;">SL</div>
+          <div><strong style="color:#7c5cfc;font-size:11px;">SLEEP</strong><br>Sleep hygiene score: LOW. Reduce screen time 2h before bed. Consistent sleep schedule.</div>
+        </div>
+        <div class="chat-bubble agent">
+          <div class="agent-icon" style="background:#3b9dff;">MN</div>
+          <div><strong style="color:#3b9dff;font-size:11px;">MENTAL</strong><br>Stress-tension pattern detected. 10-min daily meditation recommended.</div>
+        </div>
+        <div class="chat-bubble agent">
+          <div class="agent-icon" style="background:var(--text-dim);">MD</div>
+          <div>
+            <strong style="color:var(--text);font-size:11px;">MODERATOR</strong><br>
+            <strong>Consensus:</strong> Exercise + Magnesium + Sleep Hygiene + Stress Management<br>
+            <span style="color:#ff4466;font-size:12px;">If symptoms persist 2+ weeks, consult healthcare professional.</span>
+            <div class="earn">+15 H2E earned &middot; streak: 12 days &middot; multiplier: 2.4x</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="agent-grid">
+      <div class="agent-card coach reveal tilt-card">
+        <div class="card-glare"></div>
+        <div class="agent-header">
+          <div class="agent-name"><div class="icon-circle" style="background:var(--accent);">CO</div> COACH AGENT</div>
+          <div class="agent-status active">FREE</div>
+        </div>
+        <div class="agent-desc">Exercise & activity pattern analysis. Correlates physical activity with symptom improvement. Evidence-based movement recommendations.</div>
+      </div>
+      <div class="agent-card nutrition reveal reveal-delay-1 tilt-card">
+        <div class="card-glare"></div>
+        <div class="agent-header">
+          <div class="agent-name"><div class="icon-circle" style="background:var(--accent-gold);">NU</div> NUTRITION AGENT</div>
+          <div class="agent-status active">FREE</div>
+        </div>
+        <div class="agent-desc">Dietary pattern evaluation. Identifies nutritional deficiencies and correlations. Personalized food and supplement insights.</div>
+      </div>
+      <div class="agent-card sleep reveal reveal-delay-2 tilt-card">
+        <div class="card-glare"></div>
+        <div class="agent-header">
+          <div class="agent-name"><div class="icon-circle" style="background:#7c5cfc;">SL</div> SLEEP AGENT</div>
+          <div class="agent-status premium">PREMIUM</div>
+        </div>
+        <div class="agent-desc">Sleep pattern analysis and hygiene scoring. Correlates sleep quality with daily health metrics. Circadian rhythm optimization.</div>
+      </div>
+      <div class="agent-card mental reveal reveal-delay-3 tilt-card">
+        <div class="card-glare"></div>
+        <div class="agent-header">
+          <div class="agent-name"><div class="icon-circle" style="background:#3b9dff;">MN</div> MENTAL AGENT</div>
+          <div class="agent-status premium">PREMIUM</div>
+        </div>
+        <div class="agent-desc">Stress level evaluation and emotional pattern tracking. Mindfulness and coping strategy recommendations. Burnout prevention.</div>
+      </div>
+      <div class="agent-card moderator reveal reveal-delay-4 tilt-card">
+        <div class="card-glare"></div>
+        <div class="agent-header">
+          <div class="agent-name"><div class="icon-circle" style="background:var(--text-dim);">MD</div> MODERATOR</div>
+          <div class="agent-status active">SYSTEM</div>
+        </div>
+        <div class="agent-desc">Synthesizes all agent opinions into actionable conclusions. Resolves disagreements. Adds safety disclaimers and emergency detection.</div>
+      </div>
+      <div class="agent-card triage reveal reveal-delay-5 tilt-card">
+        <div class="card-glare"></div>
+        <div class="agent-header">
+          <div class="agent-name"><div class="icon-circle" style="background:#ff4466;">TR</div> TRIAGE AGENT</div>
+          <div class="agent-status active">SYSTEM</div>
+        </div>
+        <div class="agent-desc">24/7 emergency symptom monitoring. Immediately flags critical patterns and recommends professional medical attention when needed.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== ARCHITECTURE ====== -->
+<div class="section section-bg-lines" id="architecture" style="position:relative;background:rgba(8,14,24,0.6);">
+  <div class="section-glow" style="width:500px;height:500px;background:rgba(124,92,252,0.04);top:20%;left:-10%;"></div>
+  <div class="deco-shapes">
+    <svg class="deco-shape" style="top:8%;left:85%;width:100px;height:100px;" viewBox="0 0 100 100"><line x1="10" y1="10" x2="90" y2="90" stroke="#7c5cfc" stroke-width="1" opacity="0.5"/><line x1="90" y1="10" x2="10" y2="90" stroke="#7c5cfc" stroke-width="1" opacity="0.5"/></svg>
+    <svg class="deco-shape" style="bottom:5%;right:5%;width:90px;height:90px;" viewBox="0 0 90 90"><circle cx="45" cy="45" r="40" stroke="var(--accent)" stroke-width="1" fill="none" opacity="0.4"/><circle cx="45" cy="45" r="25" stroke="var(--accent)" stroke-width="1" fill="none" opacity="0.3"/></svg>
+  </div>
+  <div class="container">
+    <div class="section-label reveal">// ARCHITECTURE</div>
+    <div class="section-title reveal reveal-delay-1">Health Intelligence <span class="gradient-text gradient-text-blue">as a Service</span></div>
+    <div class="section-desc reveal reveal-delay-2">Data never leaves the system. Only intelligence goes out. This is the key insight that makes everything legally and technically possible.</div>
+
+    <div class="arch-flow">
+      <div class="arch-layer reveal">
+        <div class="bg-num">01</div>
+        <div class="arch-layer-num">LAYER 01 // DATA COLLECTION</div>
+        <div class="arch-layer-title">Humans Feed the Archive</div>
+        <div class="arch-layer-desc">Users input daily wellness data via AI chat. Multi-agent panel provides insights. Users earn H2E tokens. Data accumulates as structured wellness records (FHIR R4 tagged, SNOMED coded). All data encrypted, stored in jurisdiction-compliant servers.</div>
+      </div>
+      <div class="arch-connector">
+        <svg viewBox="0 0 40 24" fill="none"><path d="M20 0v24" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 3" opacity="0.4"/><path d="M14 18l6 6 6-6" stroke="var(--accent)" stroke-width="2" fill="none" opacity="0.4"/></svg>
+      </div>
+      <div class="arch-layer reveal reveal-delay-1">
+        <div class="bg-num">02</div>
+        <div class="arch-layer-num">LAYER 02 // INTERNAL AI TRAINING</div>
+        <div class="arch-layer-title">AI Learns Patterns</div>
+        <div class="arch-layer-desc">Accumulated data trains and fine-tunes our health intelligence models. Patterns, correlations, and trends are absorbed by the AI. Original data NEVER leaves this layer. Only the model's learned intelligence propagates upward.</div>
+      </div>
+      <div class="arch-connector">
+        <svg viewBox="0 0 40 24" fill="none"><path d="M20 0v24" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 3" opacity="0.4"/><path d="M14 18l6 6 6-6" stroke="var(--accent)" stroke-width="2" fill="none" opacity="0.4"/></svg>
+      </div>
+      <div class="arch-layer highlight reveal reveal-delay-2">
+        <div class="bg-num">03</div>
+        <div class="arch-layer-num">LAYER 03 // AGENT PAYMENT GATEWAY</div>
+        <div class="arch-layer-title" style="color:var(--accent);">Agents Buy Intelligence</div>
+        <div class="arch-layer-desc">External AI agents query our health intelligence API. They pay per query via x402 protocol (USDC/H2E). They receive AI-generated insights, synthetic data, or model predictions &mdash; never original user data. Agents authenticated via ERC-8004 identity standard.</div>
+      </div>
+    </div>
+
+    <div class="key-principle reveal">
+      <h3>DATA STAYS IN. INTELLIGENCE GOES OUT.</h3>
+      <p>Like a librarian who read every book &mdash; you pay for their knowledge, not the books themselves.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== AGENT ECONOMY ====== -->
+<div class="section section-bg-geo" id="agent-economy" style="position:relative;">
+  <div class="section-glow" style="width:500px;height:500px;background:rgba(240,160,48,0.04);bottom:-10%;right:-5%;"></div>
+  <div class="deco-shapes">
+    <svg class="deco-shape" style="top:15%;right:3%;width:70px;height:70px;" viewBox="0 0 70 70"><polygon points="35,5 65,20 65,50 35,65 5,50 5,20" stroke="var(--accent-gold)" stroke-width="1" fill="none" opacity="0.4"/></svg>
+  </div>
+  <div class="container">
+    <div class="section-label reveal">// WEB 4.0 INFRASTRUCTURE</div>
+    <div class="section-title reveal reveal-delay-1">Agent <span class="gradient-text gradient-text-gold">Economy</span></div>
+    <div class="section-desc reveal reveal-delay-2">External AI agents pay to access health intelligence. x402 protocol enables machine-to-machine payments. This is where the real scale happens.</div>
+
+    <div class="code-editor reveal">
+      <div class="code-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="code-method post">POST</span>
+          <span class="code-endpoint">/api/v2/agents/intelligence/query</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="code-payment">x402 &bull; 0.05 USDC</span>
+          <button class="code-copy" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+        </div>
+      </div>
+      <div class="code-body">
+        <div class="code-lines">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22</div>
+        <div class="code-content">
+<span class="api-comment">// Insurance AI Agent requests health risk analysis</span><br>
+<br>
+<span class="api-req">REQUEST</span> <span class="api-comment">// from INSURANCE_AGENT_0x7a3f</span><br>
+{<br>
+&nbsp;&nbsp;<span class="api-key">"query"</span>: <span class="api-str">"headache triggers for females age 25-34"</span>,<br>
+&nbsp;&nbsp;<span class="api-key">"agent_id"</span>: <span class="api-str">"erc8004:0x7a3f...b2c1"</span>,<br>
+&nbsp;&nbsp;<span class="api-key">"payment"</span>: <span class="api-str">"x402:USDC:0.05"</span><br>
+}<br>
+<br>
+<span class="api-res">RESPONSE</span> <span class="api-comment">// intelligence only, no raw data</span><br>
+{<br>
+&nbsp;&nbsp;<span class="api-key">"insight"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"top_triggers"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="api-key">"factor"</span>: <span class="api-str">"sleep_deficit"</span>, <span class="api-key">"correlation"</span>: <span class="api-num">0.72</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="api-key">"factor"</span>: <span class="api-str">"high_stress"</span>, <span class="api-key">"correlation"</span>: <span class="api-num">0.65</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="api-key">"factor"</span>: <span class="api-str">"caffeine_excess"</span>, <span class="api-key">"correlation"</span>: <span class="api-num">0.41</span> }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"confidence"</span>: <span class="api-num">0.94</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"sample_basis"</span>: <span class="api-str">"47,291 anonymized wellness patterns"</span><br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="api-key">"contains_pii"</span>: <span class="api-bool">false</span>,<br>
+&nbsp;&nbsp;<span class="api-key">"data_transferred"</span>: <span class="api-bool">false</span><br>
+}
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-cards-row">
+      <div class="econ-card reveal tilt-card shimmer-card">
+        <div class="card-glare"></div>
+        <div class="top-edge green"></div>
+        <div class="agent-name" style="margin-bottom:12px;">Intelligence Query</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:800;color:var(--accent);margin-bottom:4px;text-shadow:0 0 20px var(--accent-glow);">$0.01-0.10</div>
+        <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;">PER QUERY</div>
+        <div class="agent-desc">Ask our AI anything about health patterns. Receive statistical insights and correlations. No raw data transferred.</div>
+      </div>
+      <div class="econ-card reveal reveal-delay-1 tilt-card shimmer-card">
+        <div class="card-glare"></div>
+        <div class="top-edge gold"></div>
+        <div class="agent-name" style="margin-bottom:12px;">Synthetic Dataset</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:800;color:var(--accent-gold);margin-bottom:4px;text-shadow:0 0 20px var(--accent-gold-glow);">$0.50-5.00</div>
+        <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;">PER DATASET</div>
+        <div class="agent-desc">AI-generated synthetic health data. Statistically identical distributions. Zero PII. Perfect for research and model training.</div>
+      </div>
+      <div class="econ-card reveal reveal-delay-2 tilt-card shimmer-card">
+        <div class="card-glare"></div>
+        <div class="top-edge blue"></div>
+        <div class="agent-name" style="margin-bottom:12px;">Model Access</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:800;color:#3b9dff;margin-bottom:4px;text-shadow:0 0 20px rgba(59,157,255,0.3);">$100-1K</div>
+        <div style="font-size:11px;color:var(--text-dim);letter-spacing:1px;margin-bottom:12px;font-family:'JetBrains Mono',monospace;">PER MONTH</div>
+        <div class="agent-desc">Direct access to our health intelligence model. Run unlimited queries. Embed our AI into your agent's workflow.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== TOKEN ====== -->
+<div class="section section-bg-dots" id="token" style="position:relative;background:rgba(8,14,24,0.6);">
+  <div class="section-glow" style="width:600px;height:600px;background:rgba(240,160,48,0.04);top:10%;left:50%;transform:translateX(-50%);"></div>
+  <div class="container">
+    <div class="section-label reveal">// TOKENOMICS</div>
+    <div class="section-title reveal reveal-delay-1">$H2E <span class="gradient-text gradient-text-gold">Token</span></div>
+    <div class="section-desc reveal reveal-delay-2">Health2Earn utility token on BNB Smart Chain. Earned by humans for wellness data. Spent by AI agents for intelligence access.</div>
+
+    <div class="token-stats">
+      <div class="token-stat reveal tilt-card">
+        <div class="token-stat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 12h8"/></svg>
+        </div>
+        <div class="token-stat-value">1B</div>
+        <div class="token-stat-label">MAX SUPPLY</div>
+      </div>
+      <div class="token-stat reveal reveal-delay-1 tilt-card">
+        <div class="token-stat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
+        </div>
+        <div class="token-stat-value">BEP-20</div>
+        <div class="token-stat-label">TOKEN STANDARD</div>
+      </div>
+      <div class="token-stat reveal reveal-delay-2 tilt-card">
+        <div class="token-stat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="token-stat-value">40%</div>
+        <div class="token-stat-label">USER REWARDS</div>
+      </div>
+      <div class="token-stat reveal reveal-delay-3 tilt-card">
+        <div class="token-stat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg>
+        </div>
+        <div class="token-stat-value" style="color:var(--accent);text-shadow:0 0 20px var(--accent-glow);">DEFLATIONARY</div>
+        <div class="token-stat-label">BURN MECHANISM</div>
+      </div>
+    </div>
+
+    <div class="token-lists">
+      <div class="token-list-card reveal">
+        <div class="token-list-header" style="color:var(--accent);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          EARN (MINT)
+        </div>
+        <div class="token-list-body">
+          <div class="token-list-item"><span class="mark green">&#10003;</span> <span class="val">+5-20 H2E</span> daily health log</div>
+          <div class="token-list-item"><span class="mark green">&#10003;</span> <span class="val">+2-5x MULT</span> streak bonus (7/30/90d)</div>
+          <div class="token-list-item"><span class="mark green">&#10003;</span> <span class="val">+5-15 H2E</span> quiz completion</div>
+          <div class="token-list-item"><span class="mark green">&#10003;</span> <span class="val">+50-200 H2E</span> course completion</div>
+          <div class="token-list-item"><span class="mark green">&#10003;</span> <span class="val">+50 H2E</span> referral bonus</div>
+          <div class="token-list-item"><span class="mark green">&#10003;</span> <span class="val">+30% REV</span> agent API revenue share</div>
+        </div>
+      </div>
+      <div class="token-list-card reveal reveal-delay-1">
+        <div class="token-list-header" style="color:#ff4466;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4466" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          BURN (DEFLATION)
+        </div>
+        <div class="token-list-body">
+          <div class="token-list-item"><span class="mark red">&#10007;</span> <span class="val">-50% BURN</span> premium sub (H2E payment)</div>
+          <div class="token-list-item"><span class="mark red">&#10007;</span> <span class="val">-30% BURN</span> NFT badge purchase</div>
+          <div class="token-list-item"><span class="mark red">&#10007;</span> <span class="val">-20% BURN</span> agent API fees</div>
+          <div class="token-list-item"><span class="mark red">&#10007;</span> <span class="val">-5% BUYBACK</span> quarterly revenue</div>
+          <div class="token-list-item"><span class="mark red">&#10007;</span> <span class="val">-10% DISC</span> agent H2E payment discount</div>
+          <div class="token-list-item"><span class="mark red" style="opacity:0.3;">-</span> <span style="color:var(--text-muted);">supply decreases over time</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flywheel reveal" style="margin-top:24px;">
+      <div class="flywheel-card" style="color:var(--accent);">More Users</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card">More Data</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card" style="color:var(--accent-gold);">Smarter AI</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card" style="color:#3b9dff;">More Agent Queries</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card" style="color:var(--accent);">H2E Demand</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card" style="color:var(--accent-gold);">Token Value</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card">User Incentive</div>
+      <div class="flywheel-arrow">&rarr;</div>
+      <div class="flywheel-card" style="color:var(--accent);border-color:var(--border-hover);">More Users</div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== PRICING ====== -->
+<div class="section section-bg-geo" style="position:relative;">
+  <div class="section-glow" style="width:500px;height:500px;background:rgba(0,232,123,0.04);top:30%;right:-5%;"></div>
+  <div class="container">
+    <div class="section-label reveal">// FOR HUMANS</div>
+    <div class="section-title reveal reveal-delay-1">Subscription <span class="gradient-text gradient-text-green">Tiers</span></div>
+    <div class="section-desc reveal reveal-delay-2">Feed the archive. Earn tokens. Unlock more agents. <a href="https://web-theta-ecru-90.vercel.app/pricing" class="animated-link">View full pricing details &rarr;</a></div>
+
+    <div class="pricing-grid">
+      <div class="price-card reveal tilt-card shimmer-card">
+        <div class="card-glare"></div>
+        <div class="price-card-glow"></div>
+        <div class="price-tier">FREE</div>
+        <div class="price-amount">$0</div>
+        <div class="price-period">forever</div>
+        <ul class="price-features">
+          <li><span class="check">+</span> 2 AI Agents (Coach + Nutrition)</li>
+          <li><span class="check">+</span> 3 queries / day</li>
+          <li><span class="check">+</span> Basic dashboard</li>
+          <li><span class="check">+</span> H2E rewards (1x)</li>
+          <li><span class="check">+</span> 7-day history</li>
+          <li><span class="lock">-</span> <span style="color:var(--text-muted);">Premium agents locked</span></li>
+        </ul>
+      </div>
+      <div class="price-card featured reveal reveal-delay-1 tilt-card">
+        <div class="card-glare"></div>
+        <div class="price-card-glow" style="background:radial-gradient(ellipse at center,rgba(0,232,123,0.06) 0%,transparent 70%);"></div>
+        <div class="popular-badge">POPULAR</div>
+        <div class="price-tier">PREMIUM</div>
+        <div class="price-amount">$9.99 <span>/mo</span></div>
+        <div class="price-period">or pay with H2E (20% off)</div>
+        <ul class="price-features">
+          <li><span class="check">+</span> 5 AI Agents (all unlocked)</li>
+          <li><span class="check">+</span> Unlimited queries</li>
+          <li><span class="check">+</span> Weekly & monthly reports</li>
+          <li><span class="check">+</span> H2E rewards (2x multiplier)</li>
+          <li><span class="check">+</span> Full history + trends</li>
+          <li><span class="check">+</span> Custom health goals</li>
+        </ul>
+      </div>
+      <div class="price-card reveal reveal-delay-2 tilt-card shimmer-card">
+        <div class="card-glare"></div>
+        <div class="price-card-glow"></div>
+        <div class="price-tier">PRO</div>
+        <div class="price-amount">$29.99 <span>/mo</span></div>
+        <div class="price-period">or pay with H2E (20% off)</div>
+        <ul class="price-features">
+          <li><span class="check">+</span> Everything in Premium</li>
+          <li><span class="check">+</span> Custom agent creation</li>
+          <li><span class="check">+</span> Family accounts (5)</li>
+          <li><span class="check">+</span> H2E rewards (3x multiplier)</li>
+          <li><span class="check">+</span> API access</li>
+          <li><span class="check">+</span> Priority AI processing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== ROADMAP ====== -->
+<div class="section section-bg-lines" id="roadmap" style="position:relative;background:rgba(8,14,24,0.6);">
+  <div class="section-glow" style="width:400px;height:400px;background:rgba(124,92,252,0.04);top:0;left:0;"></div>
+  <div class="container">
+    <div class="section-label reveal">// TIMELINE</div>
+    <div class="section-title reveal reveal-delay-1">Road<span class="gradient-text gradient-text-rainbow">map</span></div>
+
+    <div class="roadmap">
+      <div class="roadmap-line"></div>
+      <div class="roadmap-item active reveal">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">Q1 2026 // NOW</div>
+        <div class="roadmap-title">MVP Launch</div>
+        <div class="roadmap-desc">Web app + 2 AI agents + wallet connection + H2E basic rewards. Hong Kong & Singapore. Begin data collection phase.</div>
+      </div>
+      <div class="roadmap-item reveal reveal-delay-1">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">Q2 2026</div>
+        <div class="roadmap-title">Full Agent Panel + TG Bot</div>
+        <div class="roadmap-desc">5 agents unlocked. Premium/Pro tiers. Telegram bot integration. Learn2Earn quizzes and courses. 50K MAU target.</div>
+      </div>
+      <div class="roadmap-item reveal reveal-delay-2">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">Q3 2026</div>
+        <div class="roadmap-title">Agent Economy v1 (x402)</div>
+        <div class="roadmap-desc">Launch Agent Payment Gateway. x402 integration for machine-to-machine payments. ERC-8004 agent identity. First external agent queries.</div>
+      </div>
+      <div class="roadmap-item reveal reveal-delay-3">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">Q4 2026</div>
+        <div class="roadmap-title">B2B + Intelligence API</div>
+        <div class="roadmap-desc">Enterprise wellness plans. Insurance partnerships. Synthetic data generation. Health Intelligence model API. 300K MAU.</div>
+      </div>
+      <div class="roadmap-item reveal reveal-delay-4">
+        <div class="roadmap-dot"></div>
+        <div class="roadmap-date">2027</div>
+        <div class="roadmap-title">Global Scale + Web 4.0</div>
+        <div class="roadmap-desc">Korea, SEA, global expansion. 1M+ MAU. 500K+ agent queries/day. Full autonomous agent economy. The machine economy exceeds the human economy.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+<!-- ====== PLAYGROUND ====== -->
+<div class="section section-bg-dots" id="playground" style="position:relative;">
+  <div class="section-glow" style="width:500px;height:500px;background:rgba(59,157,255,0.04);top:20%;left:50%;transform:translateX(-50%);"></div>
+  <div class="container">
+    <div class="section-label reveal">// INTERACTIVE DEMO</div>
+    <div class="section-title reveal reveal-delay-1">Try the <span class="gradient-text gradient-text-green">Intelligence API</span></div>
+    <div class="section-desc reveal reveal-delay-2">See how an AI agent queries our Health Intelligence Protocol in real-time. Click "Execute" to run a live demo query.</div>
+
+    <div class="playground-wrap reveal">
+      <div class="code-editor">
+        <div class="code-header">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="code-method post">POST</span>
+            <span class="code-endpoint">/api/v2/intelligence/query</span>
+          </div>
+          <button id="playground-btn" onclick="runPlayground()" style="background:var(--accent);color:var(--bg);border:none;padding:8px 20px;border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;">EXECUTE</button>
+        </div>
+        <div class="code-body" style="flex-direction:column;">
+          <div style="padding:20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;">
+            <div class="api-comment">// Select a query to test:</div>
+            <br>
+            <div class="playground-queries">
+              <button class="playground-query active" onclick="selectQuery(0)">Sleep patterns, age 20-30</button>
+              <button class="playground-query" onclick="selectQuery(1)">Headache triggers, female</button>
+              <button class="playground-query" onclick="selectQuery(2)">Exercise vs fatigue</button>
+              <button class="playground-query" onclick="selectQuery(3)">Stress-sleep interaction</button>
+            </div>
+            <div id="playground-request">
+              <div><span class="api-req">REQUEST</span> <span class="api-comment">// from DEMO_AGENT_0xdemo</span></div>
+              <div>{</div>
+              <div>&nbsp;&nbsp;<span class="api-key">"query"</span>: <span class="api-str" id="pq-query">"sleep pattern analysis for ages 20-30"</span>,</div>
+              <div>&nbsp;&nbsp;<span class="api-key">"cohort_size"</span>: <span class="api-num">1000</span>,</div>
+              <div>&nbsp;&nbsp;<span class="api-key">"payment"</span>: <span class="api-str">"x402:H2E:0.05"</span></div>
+              <div>}</div>
+            </div>
+            <div id="playground-response" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== AGENT REGISTRY ====== -->
+<div class="section section-bg-lines" id="registry" style="position:relative;background:rgba(8,14,24,0.6);">
+  <div class="section-glow" style="width:500px;height:500px;background:rgba(0,232,123,0.03);top:-5%;right:0;"></div>
+  <div class="deco-shapes">
+    <svg class="deco-shape" style="top:10%;left:3%;width:100px;height:100px;" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" stroke="var(--accent)" stroke-width="0.5" fill="none" opacity="0.3"/><circle cx="50" cy="50" r="30" stroke="var(--accent)" stroke-width="0.5" fill="none" opacity="0.2"/><circle cx="50" cy="50" r="15" stroke="var(--accent)" stroke-width="0.5" fill="none" opacity="0.1"/></svg>
+  </div>
+  <div class="container">
+    <div class="section-label reveal">// LIVE REGISTRY</div>
+    <div class="section-title reveal reveal-delay-1">Registered <span class="gradient-text gradient-text-green">Agents</span></div>
+    <div class="section-desc reveal reveal-delay-2">18 external AI agents currently connected to the Health Intelligence Protocol. <a href="https://web-theta-ecru-90.vercel.app/agents" class="animated-link">View full registry &rarr;</a></div>
+
+    <div class="reg-grid" id="agent-grid">
+      <!-- Populated by JS -->
+    </div>
+
+    <div style="text-align:center;" class="reveal">
+      <a href="https://web-theta-ecru-90.vercel.app/agents" class="btn-secondary">View All 18 Agents &rarr;</a>
+      <a href="https://web-theta-ecru-90.vercel.app/agents/register" class="btn-primary" style="margin-left:12px;">Register Your Agent</a>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== LEADERBOARD ====== -->
+<div class="section section-bg-geo" id="leaderboard" style="position:relative;">
+  <div class="section-glow" style="width:500px;height:500px;background:rgba(240,160,48,0.04);bottom:-10%;left:20%;"></div>
+  <div class="container">
+    <div class="section-label reveal">// TOP PERFORMERS</div>
+    <div class="section-title reveal reveal-delay-1">Agent <span class="gradient-text gradient-text-gold">Leaderboard</span></div>
+    <div class="section-desc reveal reveal-delay-2">Top querying AI agents ranked by intelligence consumption and H2E volume.</div>
+
+    <div class="lb-wrap reveal">
+      <div class="lb-header">
+        <div>#</div><div>AGENT</div><div style="text-align:right;">QUERIES</div><div style="text-align:right;">H2E SPENT</div><div style="text-align:right;">UPTIME</div>
+      </div>
+      <div id="leaderboard-rows"></div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ====== CTA ====== -->
+<div class="cta-section" style="position:relative;">
+  <div class="cta-glow"></div>
+  <!-- Radial burst lines -->
+  <div class="cta-burst" id="ctaBurst"></div>
+  <!-- Particles -->
+  <div class="particles" id="ctaParticles"></div>
+  <div class="container">
+    <div class="section-label reveal" style="text-align:center;">// JOIN THE PROTOCOL</div>
+    <div class="cta-title reveal reveal-delay-1">Feed the Archive.<br><span class="gradient-text gradient-text-green" style="font-size:inherit;line-height:inherit;">Earn Your Health.</span></div>
+    <div class="cta-desc reveal reveal-delay-2">The machine economy is coming. Your wellness data trains the intelligence that powers it. Start earning $H2E today.</div>
+    <div style="display:flex;justify-content:center;gap:16px;position:relative;flex-wrap:wrap;" class="reveal reveal-delay-3">
+      <a href="https://web-theta-ecru-90.vercel.app/chat" class="btn-primary">Launch App &rarr;</a>
+      <a href="https://web-theta-ecru-90.vercel.app/enterprise" class="btn-secondary">Enterprise &rarr;</a>
+      <a href="https://web-theta-ecru-90.vercel.app/api-pricing" class="btn-secondary">API Pricing &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FOOTER WAVE ====== -->
+<div class="footer-wave">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:var(--accent);stop-opacity:0.2"/>
+        <stop offset="50%" style="stop-color:var(--accent-gold);stop-opacity:0.15"/>
+        <stop offset="100%" style="stop-color:#7c5cfc;stop-opacity:0.2"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,20 C240,60 480,0 720,30 C960,60 1200,10 1440,25 L1440,60 L0,60 Z" fill="rgba(5,8,15,0.8)"/>
+    <path d="M0,30 C240,50 480,10 720,35 C960,55 1200,15 1440,30" fill="none" stroke="url(#waveGrad)" stroke-width="1.5">
+      <animate attributeName="d" dur="8s" repeatCount="indefinite" values="M0,30 C240,50 480,10 720,35 C960,55 1200,15 1440,30;M0,25 C240,45 480,15 720,40 C960,50 1200,20 1440,35;M0,30 C240,50 480,10 720,35 C960,55 1200,15 1440,30"/>
+    </path>
+  </svg>
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <div style="width:24px;height:24px;border:2px solid var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);box-shadow:0 0 10px var(--accent-glow);">$H</div>
+          Health Saviors
+        </div>
+        <p>Health Intelligence Protocol. Your data trains the AI. Only intelligence goes out. Earn $H2E for every contribution.</p>
+      </div>
+      <div class="footer-col">
+        <h4>PROTOCOL</h4>
+        <a href="#agents" class="animated-link">Agents</a>
+        <a href="#architecture" class="animated-link">Architecture</a>
+        <a href="#agent-economy" class="animated-link">Agent API</a>
+        <a href="#token" class="animated-link">Tokenomics</a>
+      </div>
+      <div class="footer-col">
+        <h4>PRODUCT</h4>
+        <a href="https://web-theta-ecru-90.vercel.app/chat" class="animated-link">Launch App</a>
+        <a href="https://web-theta-ecru-90.vercel.app/pricing" class="animated-link">Pricing</a>
+        <a href="https://web-theta-ecru-90.vercel.app/api-pricing" class="animated-link">API Pricing</a>
+        <a href="https://web-theta-ecru-90.vercel.app/enterprise" class="animated-link">Enterprise</a>
+      </div>
+      <div class="footer-col">
+        <h4>COMMUNITY</h4>
+        <a href="#" class="animated-link">Docs</a>
+        <a href="#" class="animated-link">GitHub</a>
+        <a href="#" class="animated-link">Discord</a>
+        <a href="#" class="animated-link">Telegram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="status-dot"></span>
+        HEALTH SAVIORS PROTOCOL // 2026
+      </div>
+      <div class="footer-socials">
+        <a href="#" aria-label="Twitter/X" class="twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+        <a href="#" aria-label="Discord" class="discord"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg></a>
+        <a href="#" aria-label="Telegram" class="telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+        <a href="#" aria-label="GitHub" class="github"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+      </div>
+      <div>BNB Smart Chain</div>
+    </div>
+  </div>
+</footer>
+<script>
+// ====== SCROLL PROGRESS BAR ======
+const scrollProgress = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const winScroll = document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  scrollProgress.style.width = (winScroll / height * 100) + '%';
+});
+
+// ====== NAV SCROLL ======
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// ====== INTERSECTION OBSERVER FOR REVEAL ======
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ====== 3D TILT EFFECT ======
+function initTiltCards() {
+  document.querySelectorAll('.tilt-card, .agent-card, .econ-card, .price-card, .reg-card, .token-stat').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / centerY * -4;
+      const rotateY = (x - centerX) / centerX * 4;
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px) scale(1.02)`;
+      // Update glare position
+      const glareX = (x / rect.width * 100);
+      const glareY = (y / rect.height * 100);
+      card.style.setProperty('--glare-x', glareX + '%');
+      card.style.setProperty('--glare-y', glareY + '%');
+      const glare = card.querySelector('.card-glare');
+      if (glare) {
+        glare.style.opacity = '1';
+        glare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%,rgba(255,255,255,0.12) 0%,transparent 60%)`;
+      }
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      const glare = card.querySelector('.card-glare');
+      if (glare) glare.style.opacity = '0';
+    });
+  });
+}
+initTiltCards();
+
+// ====== BUTTON RIPPLE EFFECT ======
+document.querySelectorAll('.btn-primary, .btn-secondary, .nav-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100);
+    const y = ((e.clientY - rect.top) / rect.height * 100);
+    this.style.setProperty('--ripple-x', x + '%');
+    this.style.setProperty('--ripple-y', y + '%');
+  });
+});
+
+// ====== GENERATE HERO PARTICLES ======
+function createParticles(containerId, count) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  for (let i = 0; i < count; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    const left = Math.random() * 100;
+    const duration = Math.random() * 15 + 10;
+    const delay = Math.random() * 15;
+    const colors = ['var(--accent)', 'var(--accent-gold)', '#7c5cfc', '#3b9dff'];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.cssText = `width:${size}px;height:${size}px;left:${left}%;background:${color};animation-duration:${duration}s;animation-delay:${delay}s;box-shadow:0 0 ${size*2}px ${color};`;
+    container.appendChild(particle);
+  }
+}
+createParticles('heroParticles', 20);
+createParticles('ctaParticles', 12);
+
+// ====== CTA BURST LINES ======
+(function() {
+  const burst = document.getElementById('ctaBurst');
+  if (!burst) return;
+  for (let i = 0; i < 24; i++) {
+    const line = document.createElement('div');
+    line.className = 'cta-burst-line';
+    const angle = (360 / 24) * i;
+    const colors = ['var(--accent)', 'var(--accent-gold)', '#7c5cfc', '#3b9dff'];
+    line.style.cssText = `transform:rotate(${angle}deg);width:${150 + Math.random()*100}px;background:linear-gradient(90deg,${colors[i%4]},transparent);`;
+    burst.appendChild(line);
+  }
+})();
+
+// ====== COUNTER ANIMATION ======
+function animateCounter(id, target, suffix) {
+  suffix = suffix || '';
+  const el = document.getElementById(id);
+  const duration = 2000;
+  const start = performance.now();
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+    if (target >= 1000000) {
+      el.textContent = (current / 1000000).toFixed(1) + 'M' + suffix;
+    } else if (target >= 1000) {
+      el.textContent = (current / 1000).toFixed(1) + 'K' + suffix;
+    } else {
+      el.textContent = current.toLocaleString() + suffix;
+    }
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounter('counter-users', 127400);
+      animateCounter('counter-agents', 48200);
+      animateCounter('counter-queries', 2300000);
+      animateCounter('counter-earned', 15700000);
+      counterObserver.disconnect();
+    }
+  });
+});
+counterObserver.observe(document.querySelector('.live-stats'));
+
+// ====== SMOOTH SCROLL ======
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ====== PLAYGROUND ======
+const playgroundQueries = [
+  { query: "sleep pattern analysis for ages 20-30", insight: { top_patterns: [{ factor: "late_onset_sleep", prevalence: 0.68 }, { factor: "weekend_shift", prevalence: 0.54 }, { factor: "screen_exposure", prevalence: 0.47 }], avg_sleep_hours: 6.3, confidence: 0.91, sample_basis: "31,847 anonymized wellness patterns" }},
+  { query: "headache triggers for females age 25-34", insight: { top_triggers: [{ factor: "sleep_deficit", correlation: 0.72 }, { factor: "high_stress", correlation: 0.65 }, { factor: "caffeine_excess", correlation: 0.41 }], confidence: 0.94, sample_basis: "47,291 anonymized wellness patterns" }},
+  { query: "exercise frequency vs fatigue correlation", insight: { correlation: -0.63, finding: "Regular exercise (3+/week) reduces fatigue reports by 47%", optimal_frequency: "4-5 sessions/week", diminishing_returns_at: "7+ sessions", confidence: 0.88, sample_basis: "23,456 anonymized wellness patterns" }},
+  { query: "stress-sleep bidirectional interaction model", insight: { stress_to_sleep: { correlation: -0.71, avg_sleep_loss: "48min per stress episode" }, sleep_to_stress: { correlation: -0.58, threshold: "below 6h triggers 2.3x stress risk" }, confidence: 0.86, sample_basis: "18,923 anonymized wellness patterns" }},
+];
+let selectedQueryIdx = 0;
+
+function selectQuery(idx) {
+  selectedQueryIdx = idx;
+  document.querySelectorAll('.playground-query').forEach((b,i) => b.classList.toggle('active', i === idx));
+  document.getElementById('pq-query').textContent = '"' + playgroundQueries[idx].query + '"';
+  document.getElementById('playground-response').style.display = 'none';
+}
+
+function syntaxHighlight(json) {
+  return json
+    .replace(/"([^"]+)":/g, '<span class="api-key">"$1"</span>:')
+    .replace(/: "([^"]+)"/g, ': <span class="api-str">"$1"</span>')
+    .replace(/: (true|false)/g, ': <span class="api-bool">$1</span>')
+    .replace(/: (\d+\.?\d*)/g, ': <span class="api-num">$1</span>')
+    .replace(/\n/g, '<br>')
+    .replace(/  /g, '&nbsp;&nbsp;');
+}
+
+// Typewriter effect for response
+function typeWriter(element, html, speed) {
+  return new Promise(resolve => {
+    let i = 0;
+    let inTag = false;
+    let result = '';
+    function type() {
+      if (i < html.length) {
+        const char = html[i];
+        if (char === '<') inTag = true;
+        if (inTag) {
+          result += char;
+          if (char === '>') {
+            inTag = false;
+            element.innerHTML = result;
+          }
+          i++;
+          type();
+        } else {
+          result += char;
+          element.innerHTML = result;
+          i++;
+          setTimeout(type, speed);
+        }
+      } else {
+        resolve();
+      }
+    }
+    type();
+  });
+}
+
+async function runPlayground() {
+  const btn = document.getElementById('playground-btn');
+  const respEl = document.getElementById('playground-response');
+  btn.textContent = 'QUERYING...';
+  btn.disabled = true;
+  respEl.style.display = 'block';
+  respEl.innerHTML = '<br><div class="playground-loading"><div class="loading-bar-wrap"><div class="loading-bar"></div></div> Connecting to Intelligence API...</div>';
+
+  const q = playgroundQueries[selectedQueryIdx];
+  const API_URL = 'https://web-theta-ecru-90.vercel.app/api/health';
+
+  try {
+    setTimeout(() => {
+      if (btn.disabled) respEl.innerHTML = '<br><div class="playground-loading"><div class="loading-bar-wrap"><div class="loading-bar" style="animation-duration:1.5s;"></div></div> Processing via x402 payment gateway...</div>';
+    }, 500);
+
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q.query, cohort_size: 1000, agent_id: 'DEMO_AGENT_0xdemo' })
+    });
+    const data = await res.json();
+    const json = syntaxHighlight(JSON.stringify(data, null, 2));
+    const header = '<br><div><span class="api-res">RESPONSE</span> <span class="api-comment">// 200 OK -- LIVE from Intelligence API</span></div>';
+    respEl.innerHTML = header + '<div class="typewriter-output" style="font-size:11px;line-height:1.8;"></div>';
+    await typeWriter(respEl.querySelector('.typewriter-output'), json, 2);
+  } catch (err) {
+    const json = syntaxHighlight(JSON.stringify(q.insight, null, 2));
+    const fullResponse = '{<br>&nbsp;&nbsp;<span class="api-key">"success"</span>: <span class="api-bool">true</span>,<br>' +
+      '&nbsp;&nbsp;<span class="api-key">"insight"</span>: ' + json + ',<br>' +
+      '&nbsp;&nbsp;<span class="api-key">"contains_pii"</span>: <span class="api-bool">false</span>,<br>' +
+      '&nbsp;&nbsp;<span class="api-key">"payment_receipt"</span>: {<br>' +
+      '&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"protocol"</span>: <span class="api-str">"x402"</span>,<br>' +
+      '&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"amount"</span>: <span class="api-num">0.05</span>,<br>' +
+      '&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"token"</span>: <span class="api-str">"H2E"</span>,<br>' +
+      '&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"tx_hash"</span>: <span class="api-str">"0x' + Math.random().toString(16).slice(2, 10) + '...demo"</span><br>' +
+      '&nbsp;&nbsp;}<br>}';
+    const header = '<br><div><span class="api-res">RESPONSE</span> <span class="api-comment">// 200 OK -- 0.05 H2E charged</span></div>';
+    respEl.innerHTML = header + '<div class="typewriter-output" style="font-size:11px;line-height:1.8;"></div>';
+    await typeWriter(respEl.querySelector('.typewriter-output'), fullResponse, 2);
+  }
+  btn.textContent = 'EXECUTE';
+  btn.disabled = false;
+}
+
+// ====== AGENT REGISTRY GRID ======
+const registryAgents = [
+  { name: "InsureHealth AI", addr: "0x7a3f...b2c1", cat: "Insurance", color: "#3b82f6", queries: "1.8M", initials: "IH", tier: "ENTERPRISE" },
+  { name: "PharmaScope AI", addr: "0x3f8a...d4e2", cat: "Pharma", color: "#a855f7", queries: "923K", initials: "PS", tier: "ENTERPRISE" },
+  { name: "FitSync Agent", addr: "0xb2c1...7f3a", cat: "Fitness", color: "#22c55e", queries: "2.3M", initials: "FS", tier: "PRO" },
+  { name: "WellnessBot", addr: "0x6c3d...a2b8", cat: "Wellness", color: "#84cc16", queries: "4.5M", initials: "WB", tier: "BASIC" },
+  { name: "DeFi Health Oracle", addr: "0x9c4b...e6d8", cat: "DeFi", color: "#eab308", queries: "3.4M", initials: "DH", tier: "ENTERPRISE" },
+  { name: "DiagnosAI", addr: "0xd5a7...e4c9", cat: "Diagnostics", color: "#ef4444", queries: "789K", initials: "DA", tier: "ENTERPRISE" },
+  { name: "MindWell AI", addr: "0x8f1c...b4d7", cat: "Mental Health", color: "#ec4899", queries: "534K", initials: "MW", tier: "PRO" },
+  { name: "WristData AI", addr: "0x2a6f...c3e5", cat: "Wearable", color: "#f97316", queries: "1.5M", initials: "WD", tier: "PRO" },
+  { name: "NutriScan AI", addr: "0xe7f2...a1b3", cat: "Nutrition", color: "#10b981", queries: "1.2M", initials: "NS", tier: "ENTERPRISE" },
+];
+
+const agentGrid = document.getElementById('agent-grid');
+registryAgents.forEach(a => {
+  const card = document.createElement('a');
+  card.href = 'https://web-theta-ecru-90.vercel.app/agents';
+  card.className = 'reg-card reveal tilt-card';
+  card.innerHTML = `
+    <div class="card-glare"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div>
+        <div class="reg-card-name"><div class="initials" style="background:${a.color};box-shadow:0 0 10px ${a.color}40;">${a.initials}</div> ${a.name}</div>
+        <div class="reg-card-addr">${a.addr}</div>
+      </div>
+      <div class="reg-card-status" style="color:var(--accent);">
+        <span class="status-dot" style="width:5px;height:5px;"></span> ACTIVE
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;">
+      <span class="reg-card-badge" style="background:${a.color}15;color:${a.color};">${a.cat.toUpperCase()}</span>
+      <span class="reg-card-badge" style="background:rgba(240,160,48,0.1);color:var(--accent-gold);">${a.tier}</span>
+    </div>
+    <div class="reg-card-stats">
+      <span>${a.queries} queries</span>
+      <span style="color:rgba(0,232,123,0.3);">|</span>
+      <span>x402 enabled</span>
+    </div>
+  `;
+  agentGrid.appendChild(card);
+  revealObserver.observe(card);
+});
+
+// Re-init tilt for dynamically added cards
+setTimeout(initTiltCards, 100);
+
+// ====== LEADERBOARD ======
+const leaderboardData = [
+  { rank: 1, name: "WellnessBot", addr: "0x6c3d...a2b8", initials: "WB", color: "#84cc16", queries: "4,567,890", h2e: "78,900", uptime: "99.98%", uptimeColor: "var(--accent)", sparkData: [8,12,10,14,11,13,15] },
+  { rank: 2, name: "DeFi Health Oracle", addr: "0x9c4b...e6d8", initials: "DH", color: "#eab308", queries: "3,456,789", h2e: "512,340", uptime: "99.99%", uptimeColor: "var(--accent)", sparkData: [6,9,11,10,13,12,14] },
+  { rank: 3, name: "FitSync Agent", addr: "0xb2c1...7f3a", initials: "FS", color: "#22c55e", queries: "2,341,567", h2e: "342,890", uptime: "99.99%", uptimeColor: "var(--accent)", sparkData: [5,7,8,10,9,11,12] },
+  { rank: 4, name: "InsureHealth AI", addr: "0x7a3f...b2c1", initials: "IH", color: "#3b82f6", queries: "1,847,293", h2e: "284,710", uptime: "99.97%", uptimeColor: "var(--accent)", sparkData: [4,6,8,7,9,8,10] },
+  { rank: 5, name: "WristData AI", addr: "0x2a6f...c3e5", initials: "WD", color: "#f97316", queries: "1,567,890", h2e: "234,560", uptime: "99.95%", uptimeColor: "var(--accent)", sparkData: [3,5,7,6,8,7,9] },
+  { rank: 6, name: "NutriScan AI", addr: "0xe7f2...a1b3", initials: "NS", color: "#10b981", queries: "1,234,567", h2e: "198,450", uptime: "99.92%", uptimeColor: "var(--accent)", sparkData: [4,5,6,5,7,6,8] },
+  { rank: 7, name: "PharmaScope AI", addr: "0x3f8a...d4e2", initials: "PS", color: "#a855f7", queries: "923,847", h2e: "156,230", uptime: "99.94%", uptimeColor: "var(--accent)", sparkData: [3,4,5,6,5,6,7] },
+  { rank: 8, name: "InsureChain Agent", addr: "0x9a2d...f1c7", initials: "IC", color: "#3b82f6", queries: "890,123", h2e: "198,760", uptime: "99.93%", uptimeColor: "var(--accent)", sparkData: [2,4,3,5,4,6,5] },
+  { rank: 9, name: "DiagnosAI", addr: "0xd5a7...e4c9", initials: "DA", color: "#ef4444", queries: "789,012", h2e: "167,890", uptime: "99.91%", uptimeColor: "var(--accent)", sparkData: [3,3,4,5,4,5,6] },
+  { rank: 10, name: "TeleDoc Agent", addr: "0x5d2e...f9a1", initials: "TD", color: "#06b6d4", queries: "678,901", h2e: "124,560", uptime: "99.85%", uptimeColor: "var(--accent-gold)", sparkData: [2,3,3,4,3,4,5] },
+];
+
+const lbContainer = document.getElementById('leaderboard-rows');
+leaderboardData.forEach(a => {
+  const rankBadge = a.rank <= 3
+    ? `<div class="lb-rank-badge ${['gold','silver','bronze'][a.rank-1]}">${a.rank}</div>`
+    : `<span style="color:var(--text-dim);">${a.rank}</span>`;
+
+  const maxVal = Math.max(...a.sparkData);
+  const sparkline = `<span class="lb-sparkline">${a.sparkData.map(h => {
+    const height = (h / maxVal) * 18 + 2;
+    const opacity = 0.3 + (h / maxVal) * 0.7;
+    return `<span style="height:${height}px;background:${a.color};opacity:${opacity};"></span>`;
+  }).join('')}</span>`;
+
+  const row = document.createElement('div');
+  row.className = 'lb-row';
+  row.innerHTML = `
+    <div class="lb-rank">${rankBadge}</div>
+    <div>
+      <div class="lb-name"><div class="initials" style="background:${a.color};width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 0 8px ${a.color}40;">${a.initials}</div> ${a.name}</div>
+      <div class="lb-addr">${a.addr}</div>
+    </div>
+    <div class="lb-val">${a.queries} ${sparkline}</div>
+    <div class="lb-val" style="color:var(--accent-gold);">${a.h2e}</div>
+    <div class="lb-uptime" style="color:${a.uptimeColor};">${a.uptime}</div>
+  `;
+  lbContainer.appendChild(row);
+});
+
+// ====== NAV ACTIVE LINK TRACKING ======
+const sections = document.querySelectorAll('.section[id], .cta-section');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+</body>
+</html>

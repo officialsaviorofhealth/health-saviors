@@ -1,0 +1,34 @@
+node_modules/
+.env
+.env.local
+.env.production
+.DS_Store
+.vercel
+dist/
+.next/
+*.log
+.env*.local
+
+# Secrets / infra — never commit
+*.pem
+*.key
+DEPLOY_INFO.md
+.hs_dburl
+*.tsbuildinfo
+
+# Build caches
+.turbo/
+.turbo
+
+# Internal business docs — keep out of public repo
+*.pdf
+BM-REVENUE-STRATEGY.*
+ai-health-journal-bm-plan*.html
+ai-health-journal-bm-plan-v2.html
+
+# Local tooling
+.claude/
+
+# Dev scripts (not part of the project)
+capture.cjs
+walkthrough.cjs

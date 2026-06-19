@@ -1,0 +1,10 @@
+node_modules
+dist
+.next
+.git
+*.md
+.env*
+!.env.example
+apps/web
+apps/telegram-bot
+landing-deploy

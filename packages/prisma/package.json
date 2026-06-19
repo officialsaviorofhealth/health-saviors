@@ -1,0 +1,13 @@
+{
+  "name": "@ai-health-journal/prisma",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "seed": "tsx seed.ts",
+    "seed:demo": "tsx seed-demo.ts",
+    "seed:agents": "tsx seed-agents.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  }
+}

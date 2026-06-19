@@ -1,0 +1,31 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install OpenSSL + required libs
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Install dependencies
+RUN npm install -g tsx prisma@5.22.0
+
+# Copy package files first (for caching)
+COPY package.json ./
+COPY apps/api/package.json ./apps/api/
+COPY packages/prisma/package.json ./packages/prisma/
+COPY packages/prisma/schema.prisma ./packages/prisma/
+
+# Install all deps
+RUN cd apps/api && npm install --legacy-peer-deps
+RUN cd packages/prisma && npm install && npx prisma generate
+
+# Copy source code
+COPY apps/api/ ./apps/api/
+COPY packages/ ./packages/
+
+# Entrypoint: migrate + seed + start
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+EXPOSE 3001
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

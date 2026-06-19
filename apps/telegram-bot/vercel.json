@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npx tsc --project tsconfig.vercel.json",
+  "outputDirectory": ".",
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node@3"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/webhook", "destination": "/api/webhook" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/reminder",
+      "schedule": "0 * * * *"
+    }
+  ]
+}

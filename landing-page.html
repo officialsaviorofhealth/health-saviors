@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEALTH SAVIORS | Health Intelligence Protocol</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #05080f;
+    --bg-secondary: #0a0f1a;
+    --bg-card: #0d1321;
+    --bg-terminal: #060b14;
+    --accent: #00ff88;
+    --accent-dim: #00cc6a;
+    --accent-glow: rgba(0, 255, 136, 0.15);
+    --accent-gold: #f5a623;
+    --accent-gold-glow: rgba(245, 166, 35, 0.15);
+    --accent-red: #ff3355;
+    --accent-blue: #3b82f6;
+    --accent-purple: #a855f7;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --text-muted: #334155;
+    --border: #1a2332;
+    --border-glow: rgba(0, 255, 136, 0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Grid background */
+  .grid-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(0, 255, 136, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 136, 0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ====== NAV ====== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(5, 8, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  nav .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo .logo-icon {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .status-dot.gold { background: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold); }
+  .status-dot.red { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); animation: pulse 1s ease-in-out infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 8px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover {
+    box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow);
+  }
+
+  /* ====== HERO ====== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 80px;
+    position: relative;
+  }
+
+  .hero-surveillance {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .hero-surveillance .blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-title {
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+
+  .hero-title .line1 { color: var(--text); }
+  .hero-title .line2 {
+    background: linear-gradient(135deg, var(--accent), #00cc88, var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .hero-sub strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 14px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 14px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Live stats bar */
+  .live-stats {
+    display: flex;
+    gap: 40px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .live-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .live-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .live-stat-value.gold { color: var(--accent-gold); }
+
+  .live-stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  /* ====== TERMINAL SECTION ====== */
+  .section {
+    padding: 100px 0;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 48px;
+    line-height: 1.6;
+  }
+
+  /* Terminal */
+  .terminal {
+    background: var(--bg-terminal);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 24px;
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-title {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: 8px;
+    letter-spacing: 1px;
+  }
+
+  .terminal-body {
+    padding: 20px;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .terminal-line {
+    display: flex;
+    gap: 8px;
+  }
+
+  .terminal-prompt { color: var(--accent); }
+  .terminal-cmd { color: var(--text); }
+  .terminal-comment { color: var(--text-dim); font-style: italic; }
+  .terminal-output { color: var(--accent-gold); }
+  .terminal-error { color: var(--accent-red); }
+  .terminal-success { color: var(--accent); }
+
+  /* ====== AGENT PANEL ====== */
+  .agent-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .agent-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .agent-box:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 30px var(--accent-glow);
+  }
+
+  .agent-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .agent-box.coach::before { background: var(--accent); }
+  .agent-box.nutrition::before { background: var(--accent-gold); }
+  .agent-box.sleep::before { background: var(--accent-purple); }
+  .agent-box.mental::before { background: var(--accent-blue); }
+  .agent-box.moderator::before { background: #fff; }
+  .agent-box.triage::before { background: var(--accent-red); }
+
+  .agent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .agent-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .agent-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  .agent-status.active {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+  }
+
+  .agent-status.premium {
+    background: rgba(245, 166, 35, 0.1);
+    color: var(--accent-gold);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+  }
+
+  .agent-status.pro {
+    background: rgba(168, 85, 247, 0.1);
+    color: var(--accent-purple);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  .agent-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ====== ARCHITECTURE ====== */
+  .arch-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 40px 0;
+  }
+
+  .arch-layer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 32px;
+    position: relative;
+  }
+
+  .arch-layer:first-child { border-radius: 12px 12px 0 0; }
+  .arch-layer:last-child { border-radius: 0 0 12px 12px; }
+
+  .arch-layer-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .arch-layer-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .arch-layer-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .arch-arrow {
+    text-align: center;
+    padding: 8px 0;
+    color: var(--accent);
+    font-size: 24px;
+    background: var(--bg);
+    position: relative;
+    z-index: 2;
+  }
+
+  .arch-layer.highlight {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.03), transparent);
+  }
+
+  /* ====== PRICING ====== */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .price-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 24px;
+    transition: all 0.3s;
+  }
+
+  .price-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+
+  .price-card.featured {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), transparent);
+    position: relative;
+  }
+
+  .price-card.featured::after {
+    content: 'POPULAR';
+    position: absolute;
+    top: -1px; right: 20px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 0 0 6px 6px;
+    letter-spacing: 2px;
+  }
+
+  .price-tier {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .price-amount {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .price-amount span { font-size: 16px; color: var(--text-dim); font-weight: 400; }
+
+  .price-period {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .price-features {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .price-features li {
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .price-features li .check { color: var(--accent); font-weight: 700; }
+  .price-features li .lock { color: var(--text-muted); }
+
+  /* ====== TOKEN ====== */
+  .token-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .token-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .token-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent-gold);
+    margin-bottom: 4px;
+  }
+
+  .token-stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  /* ====== AGENT ECONOMY ====== */
+  .agent-api-demo {
+    background: var(--bg-terminal);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 40px 0;
+  }
+
+  .api-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  .api-method {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  .api-endpoint { color: var(--text-dim); }
+
+  .api-payment {
+    color: var(--accent-gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .api-body {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .api-req { color: var(--accent-blue); }
+  .api-res { color: var(--accent); }
+  .api-key { color: var(--accent-gold); }
+  .api-val { color: var(--text); }
+  .api-comment { color: var(--text-muted); }
+
+  /* ====== ROADMAP ====== */
+  .roadmap {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-gold), var(--accent-purple));
+  }
+
+  .roadmap-item {
+    position: relative;
+    margin-bottom: 40px;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .roadmap-item::before {
+    content: '';
+    position: absolute;
+    left: -33px;
+    top: 28px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+  }
+
+  .roadmap-item.active::before {
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .roadmap-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .roadmap-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .roadmap-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ====== CTA ====== */
+  .cta-section {
+    text-align: center;
+    padding: 120px 0;
+    position: relative;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+    position: relative;
+  }
+
+  .cta-desc {
+    font-size: 16px;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  /* ====== FOOTER ====== */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ====== ANIMATIONS ====== */
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .delay-2 { animation-delay: 0.2s; opacity: 0; }
+  .delay-3 { animation-delay: 0.3s; opacity: 0; }
+  .delay-4 { animation-delay: 0.4s; opacity: 0; }
+  .delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+  /* Glitch effect */
+  .glitch {
+    position: relative;
+  }
+
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .glitch::before {
+    animation: glitch-1 2s infinite linear alternate-reverse;
+    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+    -webkit-text-fill-color: var(--accent-red);
+    opacity: 0.3;
+  }
+
+  .glitch::after {
+    animation: glitch-2 3s infinite linear alternate-reverse;
+    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+    -webkit-text-fill-color: var(--accent-blue);
+    opacity: 0.3;
+  }
+
+  @keyframes glitch-1 {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-1px, 1px); }
+    80% { transform: translate(1px, -1px); }
+    100% { transform: translate(0); }
+  }
+
+  @keyframes glitch-2 {
+    0% { transform: translate(0); }
+    20% { transform: translate(2px, -2px); }
+    40% { transform: translate(-2px, 2px); }
+    60% { transform: translate(1px, -1px); }
+    80% { transform: translate(-1px, 1px); }
+    100% { transform: translate(0); }
+  }
+
+  /* Counter animation */
+  .counter { display: inline-block; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-title { font-size: 36px; }
+    .agent-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .token-stats { grid-template-columns: 1fr 1fr; }
+    .live-stats { flex-wrap: wrap; gap: 20px; }
+    .nav-links { display: none; }
+    .section-title { font-size: 28px; }
+  }
+
+  /* Playground */
+  .playground-query {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono';
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .playground-query:hover, .playground-query.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,255,136,0.05);
+  }
+  .playground-loading {
+    color: var(--accent);
+    font-family: 'JetBrains Mono';
+    font-size: 12px;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* Registry Card */
+  .reg-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+  }
+  .reg-card:hover { border-color: rgba(0,255,136,0.3); box-shadow: 0 0 30px rgba(0,255,136,0.05); }
+  .reg-card-name { font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+  .reg-card-addr { font-family: 'JetBrains Mono'; font-size: 9px; color: rgba(0,255,136,0.4); margin-bottom: 8px; }
+  .reg-card-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .reg-card-stats { display: flex; gap: 12px; font-family: 'JetBrains Mono'; font-size: 9px; color: var(--text-dim); }
+  .reg-card-badge { display: inline-block; font-family: 'JetBrains Mono'; font-size: 8px; font-weight: 700; letter-spacing: 1px; padding: 2px 8px; border-radius: 10px; }
+  .reg-card-status { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono'; font-size: 8px; font-weight: 700; letter-spacing: 1px; }
+
+  /* Leaderboard */
+  .lb-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 120px 120px 80px;
+    gap: 0;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-family: 'JetBrains Mono';
+    font-size: 12px;
+    transition: background 0.2s;
+    align-items: center;
+  }
+  .lb-row:hover { background: rgba(0,255,136,0.03); }
+  .lb-rank { font-weight: 800; }
+  .lb-name { color: #fff; font-weight: 600; }
+  .lb-addr { font-size: 9px; color: rgba(0,255,136,0.4); }
+  .lb-val { text-align: right; color: var(--text-secondary); }
+  .lb-uptime { text-align: right; }
+
+  @media (max-width: 768px) {
+    #agent-grid { grid-template-columns: 1fr !important; }
+    .lb-row { font-size: 10px; grid-template-columns: 30px 1fr 80px 80px 60px; }
+  }
+
+  /* Marquee */
+  .marquee-container {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    background: rgba(0, 255, 136, 0.02);
+  }
+
+  .marquee {
+    display: flex;
+    animation: marquee 30s linear infinite;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    gap: 40px;
+    white-space: nowrap;
+  }
+
+  .marquee span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .tag-sm {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+
+  .tag-green { background: rgba(0,255,136,0.1); color: var(--accent); }
+  .tag-gold { background: rgba(245,166,35,0.1); color: var(--accent-gold); }
+  .tag-red { background: rgba(255,51,85,0.1); color: var(--accent-red); }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ====== NAV ====== -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="logo-icon">$H</div>
+      HEALTH SAVIORS
+    </div>
+    <ul class="nav-links">
+      <a href="#agents">Agents</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#agent-economy">Agent API</a>
+      <a href="#registry">Registry</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#token">$H2E</a>
+    </ul>
+    <div class="nav-status">
+      <span style="display: flex; align-items: center; gap: 6px;"><span class="status-dot"></span> PROTOCOL LIVE</span>
+      <a href="https://web-theta-ecru-90.vercel.app/chat" class="nav-btn" style="text-decoration:none;">LAUNCH APP</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-surveillance fade-in">
+      <span class="blink">_</span> AGENTS ACTIVE // HEALTH INTELLIGENCE PROTOCOL v1.0
+    </div>
+    <h1 class="hero-title fade-in delay-1">
+      <span class="line1">Your Health Data</span><br>
+      <span class="line2 glitch" data-text="Trains the Intelligence.">Trains the Intelligence.</span>
+    </h1>
+    <p class="hero-sub fade-in delay-2">
+      Multi-agent AI panel analyzes your wellness. Data stays inside.
+      Only <strong>intelligence goes out</strong> &mdash; sold to AI agents via x402.
+      You earn <strong>$H2E</strong> for every contribution.
+    </p>
+    <div class="hero-actions fade-in delay-3">
+      <a href="https://web-theta-ecru-90.vercel.app/chat" class="btn-primary">LAUNCH APP &rarr;</a>
+      <a href="#architecture" class="btn-secondary">VIEW ARCHITECTURE</a>
+    </div>
+    <div class="live-stats fade-in delay-4">
+      <div class="live-stat">
+        <div class="live-stat-value" id="counter-users">0</div>
+        <div class="live-stat-label">HEALTH SAVIORS</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value gold" id="counter-agents">0</div>
+        <div class="live-stat-label">AGENTS QUERYING</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value" id="counter-queries">0</div>
+        <div class="live-stat-label">QUERIES TODAY</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value gold" id="counter-earned">0</div>
+        <div class="live-stat-label">H2E DISTRIBUTED</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MARQUEE ====== -->
+<div class="marquee-container">
+  <div class="marquee">
+    <span><span class="status-dot"></span> INSURANCE_AGENT_0x7a queried sleep patterns</span>
+    <span><span class="status-dot gold"></span> PHARMA_AGENT_0x3f purchased headache correlation dataset</span>
+    <span><span class="status-dot"></span> FITNESS_AGENT_0xb2 accessed exercise effectiveness model</span>
+    <span><span class="status-dot gold"></span> DEFI_AGENT_0x9c queried health risk scores</span>
+    <span><span class="status-dot red"></span> TRIAGE_AGENT flagged emergency pattern in user_0x4d</span>
+    <span><span class="status-dot"></span> RESEARCH_AGENT_0x1a accessed synthetic wellness dataset</span>
+    <span><span class="status-dot gold"></span> x402 payment confirmed: 0.05 USDC from NUTRITION_AGENT_0xe7</span>
+    <span><span class="status-dot"></span> INSURANCE_AGENT_0x7a queried sleep patterns</span>
+    <span><span class="status-dot gold"></span> PHARMA_AGENT_0x3f purchased headache correlation dataset</span>
+    <span><span class="status-dot"></span> FITNESS_AGENT_0xb2 accessed exercise effectiveness model</span>
+    <span><span class="status-dot gold"></span> DEFI_AGENT_0x9c queried health risk scores</span>
+    <span><span class="status-dot red"></span> TRIAGE_AGENT flagged emergency pattern in user_0x4d</span>
+  </div>
+</div>
+
+<!-- ====== HOW IT WORKS ====== -->
+<div class="section" id="agents">
+  <div class="container">
+    <div class="section-label">// HOW IT WORKS</div>
+    <div class="section-title">Multi-Agent <span style="color: var(--accent);">AI Panel</span></div>
+    <div class="section-desc">Your health input is analyzed by multiple specialized AI agents simultaneously. They debate, cross-reference, and synthesize &mdash; like a board of wellness experts.</div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background: #ff5f56;"></div>
+        <div class="terminal-dot" style="background: #ffbd2e;"></div>
+        <div class="terminal-dot" style="background: #27c93f;"></div>
+        <div class="terminal-title">AI HEALTH PANEL // SESSION #48,291</div>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-line"><span class="terminal-prompt">user &gt;</span> <span class="terminal-cmd">"I've had headaches for 3 days and can't sleep well"</span></div>
+        <br>
+        <div class="terminal-line"><span class="terminal-comment">// routing to 4 agents in parallel...</span></div>
+        <br>
+        <div class="terminal-line"><span class="terminal-success">[COACH]</span> <span class="terminal-output">Regular aerobic exercise reduces headache frequency by 40%. Recommend 30-min daily walks.</span></div>
+        <div class="terminal-line"><span class="terminal-success">[NUTRITION]</span> <span class="terminal-output">Magnesium deficiency correlates with headache + insomnia. Add nuts, bananas, leafy greens.</span></div>
+        <div class="terminal-line"><span class="terminal-success">[SLEEP]</span> <span class="terminal-output">Sleep hygiene score: LOW. Reduce screen time 2h before bed. Consistent sleep schedule.</span></div>
+        <div class="terminal-line"><span class="terminal-success">[MENTAL]</span> <span class="terminal-output">Stress-tension pattern detected. 10-min daily meditation recommended.</span></div>
+        <br>
+        <div class="terminal-line"><span class="terminal-prompt">[MODERATOR]</span> <span class="terminal-cmd">Synthesizing 4 agent opinions...</span></div>
+        <div class="terminal-line"><span class="terminal-output">CONSENSUS: Exercise + Magnesium + Sleep Hygiene + Stress Management</span></div>
+        <div class="terminal-line"><span class="terminal-error">WARNING: If symptoms persist 2+ weeks, consult healthcare professional.</span></div>
+        <br>
+        <div class="terminal-line"><span class="terminal-success">+15 H2E earned</span> <span class="terminal-comment">// streak: 12 days // multiplier: 2.4x</span></div>
+      </div>
+    </div>
+
+    <div class="agent-grid">
+      <div class="agent-box coach">
+        <div class="agent-header">
+          <div class="agent-name">🏃 COACH AGENT</div>
+          <div class="agent-status active">FREE</div>
+        </div>
+        <div class="agent-desc">Exercise & activity pattern analysis. Correlates physical activity with symptom improvement. Evidence-based movement recommendations.</div>
+      </div>
+      <div class="agent-box nutrition">
+        <div class="agent-header">
+          <div class="agent-name">🥗 NUTRITION AGENT</div>
+          <div class="agent-status active">FREE</div>
+        </div>
+        <div class="agent-desc">Dietary pattern evaluation. Identifies nutritional deficiencies and correlations. Personalized food and supplement insights.</div>
+      </div>
+      <div class="agent-box sleep">
+        <div class="agent-header">
+          <div class="agent-name">😴 SLEEP AGENT</div>
+          <div class="agent-status premium">PREMIUM</div>
+        </div>
+        <div class="agent-desc">Sleep pattern analysis and hygiene scoring. Correlates sleep quality with daily health metrics. Circadian rhythm optimization.</div>
+      </div>
+      <div class="agent-box mental">
+        <div class="agent-header">
+          <div class="agent-name">🧘 MENTAL AGENT</div>
+          <div class="agent-status premium">PREMIUM</div>
+        </div>
+        <div class="agent-desc">Stress level evaluation and emotional pattern tracking. Mindfulness and coping strategy recommendations. Burnout prevention.</div>
+      </div>
+      <div class="agent-box moderator">
+        <div class="agent-header">
+          <div class="agent-name">📋 MODERATOR</div>
+          <div class="agent-status active">SYSTEM</div>
+        </div>
+        <div class="agent-desc">Synthesizes all agent opinions into actionable conclusions. Resolves disagreements. Adds safety disclaimers and emergency detection.</div>
+      </div>
+      <div class="agent-box triage">
+        <div class="agent-header">
+          <div class="agent-name">🚨 TRIAGE AGENT</div>
+          <div class="agent-status active">SYSTEM</div>
+        </div>
+        <div class="agent-desc">24/7 emergency symptom monitoring. Immediately flags critical patterns and recommends professional medical attention when needed.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ARCHITECTURE ====== -->
+<div class="section" id="architecture" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-label">// ARCHITECTURE</div>
+    <div class="section-title">Health Intelligence <span style="color: var(--accent);">as a Service</span></div>
+    <div class="section-desc">Data never leaves the system. Only intelligence goes out. This is the key insight that makes everything legally and technically possible.</div>
+
+    <div class="arch-flow">
+      <div class="arch-layer">
+        <div class="arch-layer-num">LAYER 01 // DATA COLLECTION</div>
+        <div class="arch-layer-title">Humans Feed the Archive</div>
+        <div class="arch-layer-desc">Users input daily wellness data via AI chat. Multi-agent panel provides insights. Users earn H2E tokens. Data accumulates as structured wellness records (FHIR R4 tagged, SNOMED coded). All data encrypted, stored in jurisdiction-compliant servers.</div>
+      </div>
+      <div class="arch-arrow">&darr;</div>
+      <div class="arch-layer">
+        <div class="arch-layer-num">LAYER 02 // INTERNAL AI TRAINING</div>
+        <div class="arch-layer-title">AI Learns Patterns</div>
+        <div class="arch-layer-desc">Accumulated data trains and fine-tunes our health intelligence models. Patterns, correlations, and trends are absorbed by the AI. Original data NEVER leaves this layer. Only the model's learned intelligence propagates upward.</div>
+      </div>
+      <div class="arch-arrow">&darr;</div>
+      <div class="arch-layer highlight">
+        <div class="arch-layer-num">LAYER 03 // AGENT PAYMENT GATEWAY</div>
+        <div class="arch-layer-title" style="color: var(--accent);">Agents Buy Intelligence</div>
+        <div class="arch-layer-desc">External AI agents query our health intelligence API. They pay per query via x402 protocol (USDC/H2E). They receive AI-generated insights, synthetic data, or model predictions &mdash; never original user data. Agents authenticated via ERC-8004 identity standard.</div>
+      </div>
+    </div>
+
+    <div class="terminal" style="margin-top: 32px;">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background: #ff5f56;"></div>
+        <div class="terminal-dot" style="background: #ffbd2e;"></div>
+        <div class="terminal-dot" style="background: #27c93f;"></div>
+        <div class="terminal-title">KEY PRINCIPLE</div>
+      </div>
+      <div class="terminal-body" style="text-align: center; padding: 30px;">
+        <div style="font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 8px;">DATA STAYS IN. INTELLIGENCE GOES OUT.</div>
+        <div style="font-size: 13px; color: var(--text-dim);">Like a librarian who read every book &mdash; you pay for their knowledge, not the books themselves.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== AGENT ECONOMY ====== -->
+<div class="section" id="agent-economy">
+  <div class="container">
+    <div class="section-label">// WEB 4.0 INFRASTRUCTURE</div>
+    <div class="section-title">Agent <span style="color: var(--accent-gold);">Economy</span></div>
+    <div class="section-desc">External AI agents pay to access health intelligence. x402 protocol enables machine-to-machine payments. This is where the real scale happens.</div>
+
+    <div class="agent-api-demo">
+      <div class="api-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="api-method">POST</span>
+          <span class="api-endpoint">/api/v2/agents/intelligence/query</span>
+        </div>
+        <div class="api-payment">x402 &bull; 0.05 USDC</div>
+      </div>
+      <div class="api-body">
+        <div class="api-comment">// Insurance AI Agent requests health risk analysis</div>
+        <br>
+        <div><span class="api-req">REQUEST</span> <span class="api-comment">// from INSURANCE_AGENT_0x7a3f</span></div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="api-key">"query"</span>: <span class="api-val">"headache triggers for females age 25-34"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="api-key">"agent_id"</span>: <span class="api-val">"erc8004:0x7a3f...b2c1"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="api-key">"payment"</span>: <span class="api-val">"x402:USDC:0.05"</span></div>
+        <div>}</div>
+        <br>
+        <div><span class="api-res">RESPONSE</span> <span class="api-comment">// intelligence only, no raw data</span></div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="api-key">"insight"</span>: {</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"top_triggers"</span>: [</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="api-key">"factor"</span>: <span class="api-val">"sleep_deficit"</span>, <span class="api-key">"correlation"</span>: <span class="api-val">0.72</span> },</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="api-key">"factor"</span>: <span class="api-val">"high_stress"</span>, <span class="api-key">"correlation"</span>: <span class="api-val">0.65</span> },</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="api-key">"factor"</span>: <span class="api-val">"caffeine_excess"</span>, <span class="api-key">"correlation"</span>: <span class="api-val">0.41</span> }</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;],</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"confidence"</span>: <span class="api-val">0.94</span>,</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"sample_basis"</span>: <span class="api-val">"47,291 anonymized wellness patterns"</span></div>
+        <div>&nbsp;&nbsp;},</div>
+        <div>&nbsp;&nbsp;<span class="api-key">"contains_pii"</span>: <span class="api-val">false</span>,</div>
+        <div>&nbsp;&nbsp;<span class="api-key">"data_transferred"</span>: <span class="api-val">false</span></div>
+        <div>}</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="agent-box" style="border-left: none;">
+        <div class="agent-name" style="margin-bottom: 12px;">Intelligence Query</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 4px;">$0.01-0.10</div>
+        <div style="font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 12px;">PER QUERY</div>
+        <div class="agent-desc">Ask our AI anything about health patterns. Receive statistical insights and correlations. No raw data transferred.</div>
+      </div>
+      <div class="agent-box" style="border-left: none;">
+        <div class="agent-name" style="margin-bottom: 12px;">Synthetic Dataset</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 24px; font-weight: 800; color: var(--accent-gold); margin-bottom: 4px;">$0.50-5.00</div>
+        <div style="font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 12px;">PER DATASET</div>
+        <div class="agent-desc">AI-generated synthetic health data. Statistically identical distributions. Zero PII. Perfect for research and model training.</div>
+      </div>
+      <div class="agent-box" style="border-left: none;">
+        <div class="agent-name" style="margin-bottom: 12px;">Model Access</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 24px; font-weight: 800; color: var(--accent-purple); margin-bottom: 4px;">$100-1K</div>
+        <div style="font-size: 11px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 12px;">PER MONTH</div>
+        <div class="agent-desc">Direct access to our health intelligence model. Run unlimited queries. Embed our AI into your agent's workflow.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TOKEN ====== -->
+<div class="section" id="token" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-label">// TOKENOMICS</div>
+    <div class="section-title">$H2E <span style="color: var(--accent-gold);">Token</span></div>
+    <div class="section-desc">Health2Earn utility token on BNB Smart Chain. Earned by humans for wellness data. Spent by AI agents for intelligence access.</div>
+
+    <div class="token-stats">
+      <div class="token-stat">
+        <div class="token-stat-value">1B</div>
+        <div class="token-stat-label">MAX SUPPLY</div>
+      </div>
+      <div class="token-stat">
+        <div class="token-stat-value">BEP-20</div>
+        <div class="token-stat-label">TOKEN STANDARD</div>
+      </div>
+      <div class="token-stat">
+        <div class="token-stat-value">40%</div>
+        <div class="token-stat-label">USER REWARDS</div>
+      </div>
+      <div class="token-stat">
+        <div class="token-stat-value" style="color: var(--accent);">DEFLATIONARY</div>
+        <div class="token-stat-label">BURN MECHANISM</div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="terminal-dot" style="background: #27c93f;"></div>
+          <div class="terminal-title">EARN (MINT)</div>
+        </div>
+        <div class="terminal-body" style="font-size: 12px;">
+          <div class="terminal-line"><span class="terminal-success">+5-20 H2E</span> <span class="terminal-comment">daily health log</span></div>
+          <div class="terminal-line"><span class="terminal-success">+2-5x MULT</span> <span class="terminal-comment">streak bonus (7/30/90d)</span></div>
+          <div class="terminal-line"><span class="terminal-success">+5-15 H2E</span> <span class="terminal-comment">quiz completion</span></div>
+          <div class="terminal-line"><span class="terminal-success">+50-200 H2E</span> <span class="terminal-comment">course completion</span></div>
+          <div class="terminal-line"><span class="terminal-success">+50 H2E</span> <span class="terminal-comment">referral bonus</span></div>
+          <div class="terminal-line"><span class="terminal-success">+30% REV</span> <span class="terminal-comment">agent API revenue share</span></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="terminal-dot" style="background: #ff5f56;"></div>
+          <div class="terminal-title">BURN (DEFLATION)</div>
+        </div>
+        <div class="terminal-body" style="font-size: 12px;">
+          <div class="terminal-line"><span class="terminal-error">-50% BURN</span> <span class="terminal-comment">premium sub (H2E payment)</span></div>
+          <div class="terminal-line"><span class="terminal-error">-30% BURN</span> <span class="terminal-comment">NFT badge purchase</span></div>
+          <div class="terminal-line"><span class="terminal-error">-20% BURN</span> <span class="terminal-comment">agent API fees</span></div>
+          <div class="terminal-line"><span class="terminal-error">-5% BUYBACK</span> <span class="terminal-comment">quarterly revenue</span></div>
+          <div class="terminal-line"><span class="terminal-error">-10% DISC</span> <span class="terminal-comment">agent H2E payment discount</span></div>
+          <div class="terminal-line"><span class="terminal-comment">// supply decreases over time</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="terminal" style="margin-top: 16px;">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background: #ffbd2e;"></div>
+        <div class="terminal-title">FLYWHEEL</div>
+      </div>
+      <div class="terminal-body" style="text-align: center; padding: 24px; font-size: 13px;">
+        <span style="color: var(--accent);">More Users</span> &rarr;
+        <span style="color: var(--text);">More Data</span> &rarr;
+        <span style="color: var(--accent-gold);">Smarter AI</span> &rarr;
+        <span style="color: var(--accent-purple);">More Agent Queries</span> &rarr;
+        <span style="color: var(--accent);">H2E Demand &uarr;</span> &rarr;
+        <span style="color: var(--accent-gold);">Token Value &uarr;</span> &rarr;
+        <span style="color: var(--text);">User Incentive &uarr;</span> &rarr;
+        <span style="color: var(--accent);">More Users</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PRICING ====== -->
+<div class="section">
+  <div class="container">
+    <div class="section-label">// FOR HUMANS</div>
+    <div class="section-title">Subscription <span style="color: var(--accent);">Tiers</span></div>
+    <div class="section-desc">Feed the archive. Earn tokens. Unlock more agents.</div>
+
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">FREE</div>
+        <div class="price-amount">$0</div>
+        <div class="price-period">forever</div>
+        <ul class="price-features">
+          <li><span class="check">+</span> 2 AI Agents (Coach + Nutrition)</li>
+          <li><span class="check">+</span> 3 queries / day</li>
+          <li><span class="check">+</span> Basic dashboard</li>
+          <li><span class="check">+</span> H2E rewards (1x)</li>
+          <li><span class="check">+</span> 7-day history</li>
+          <li><span class="lock">-</span> <span style="color: var(--text-muted);">Premium agents locked</span></li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <div class="price-tier">PREMIUM</div>
+        <div class="price-amount">$9.99 <span>/mo</span></div>
+        <div class="price-period">or pay with H2E (20% off)</div>
+        <ul class="price-features">
+          <li><span class="check">+</span> 5 AI Agents (all unlocked)</li>
+          <li><span class="check">+</span> Unlimited queries</li>
+          <li><span class="check">+</span> Weekly & monthly reports</li>
+          <li><span class="check">+</span> H2E rewards (2x multiplier)</li>
+          <li><span class="check">+</span> Full history + trends</li>
+          <li><span class="check">+</span> Custom health goals</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">PRO</div>
+        <div class="price-amount">$29.99 <span>/mo</span></div>
+        <div class="price-period">or pay with H2E (20% off)</div>
+        <ul class="price-features">
+          <li><span class="check">+</span> Everything in Premium</li>
+          <li><span class="check">+</span> Custom agent creation</li>
+          <li><span class="check">+</span> Family accounts (5)</li>
+          <li><span class="check">+</span> H2E rewards (3x multiplier)</li>
+          <li><span class="check">+</span> API access</li>
+          <li><span class="check">+</span> Priority AI processing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ROADMAP ====== -->
+<div class="section" id="roadmap" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-label">// TIMELINE</div>
+    <div class="section-title">Road<span style="color: var(--accent);">map</span></div>
+
+    <div class="roadmap">
+      <div class="roadmap-item active">
+        <div class="roadmap-date">Q1 2026 // NOW</div>
+        <div class="roadmap-title">MVP Launch</div>
+        <div class="roadmap-desc">Web app + 2 AI agents + wallet connection + H2E basic rewards. Hong Kong & Singapore. Begin data collection phase.</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-date">Q2 2026</div>
+        <div class="roadmap-title">Full Agent Panel + TG Bot</div>
+        <div class="roadmap-desc">5 agents unlocked. Premium/Pro tiers. Telegram bot integration. Learn2Earn quizzes and courses. 50K MAU target.</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-date">Q3 2026</div>
+        <div class="roadmap-title">Agent Economy v1 (x402)</div>
+        <div class="roadmap-desc">Launch Agent Payment Gateway. x402 integration for machine-to-machine payments. ERC-8004 agent identity. First external agent queries.</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-date">Q4 2026</div>
+        <div class="roadmap-title">B2B + Intelligence API</div>
+        <div class="roadmap-desc">Enterprise wellness plans. Insurance partnerships. Synthetic data generation. Health Intelligence model API. 300K MAU.</div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-date">2027</div>
+        <div class="roadmap-title">Global Scale + Web 4.0</div>
+        <div class="roadmap-desc">Korea, SEA, global expansion. 1M+ MAU. 500K+ agent queries/day. Full autonomous agent economy. The machine economy exceeds the human economy.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LIVE API PLAYGROUND ====== -->
+<div class="section" id="playground">
+  <div class="container">
+    <div class="section-label">// INTERACTIVE DEMO</div>
+    <div class="section-title">Try the <span style="color: var(--accent);">Intelligence API</span></div>
+    <div class="section-desc">See how an AI agent queries our Health Intelligence Protocol in real-time. Click "Execute" to run a live demo query.</div>
+
+    <div class="agent-api-demo" style="max-width: 700px; margin: 0 auto;">
+      <div class="api-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="api-method">POST</span>
+          <span class="api-endpoint">/api/v2/intelligence/query</span>
+        </div>
+        <button id="playground-btn" onclick="runPlayground()" style="background: var(--accent); color: #000; border: none; padding: 6px 16px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 1px;">▶ EXECUTE</button>
+      </div>
+      <div class="api-body" id="playground-body" style="min-height: 200px;">
+        <div class="api-comment">// Select a query to test:</div>
+        <br>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+          <button class="playground-query active" onclick="selectQuery(0)" data-idx="0">Sleep patterns, age 20-30</button>
+          <button class="playground-query" onclick="selectQuery(1)" data-idx="1">Headache triggers, female</button>
+          <button class="playground-query" onclick="selectQuery(2)" data-idx="2">Exercise vs fatigue correlation</button>
+          <button class="playground-query" onclick="selectQuery(3)" data-idx="3">Stress-sleep interaction</button>
+        </div>
+        <div id="playground-request">
+          <div><span class="api-req">REQUEST</span> <span class="api-comment">// from DEMO_AGENT_0xdemo</span></div>
+          <div>{</div>
+          <div>&nbsp;&nbsp;<span class="api-key">"query"</span>: <span class="api-val" id="pq-query">"sleep pattern analysis for ages 20-30"</span>,</div>
+          <div>&nbsp;&nbsp;<span class="api-key">"cohort_size"</span>: <span class="api-val">1000</span>,</div>
+          <div>&nbsp;&nbsp;<span class="api-key">"payment"</span>: <span class="api-val">"x402:H2E:0.05"</span></div>
+          <div>}</div>
+        </div>
+        <div id="playground-response" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== AGENT REGISTRY ====== -->
+<div class="section" id="registry" style="background: var(--bg-secondary);">
+  <div class="container">
+    <div class="section-label">// LIVE REGISTRY</div>
+    <div class="section-title">Registered <span style="color: var(--accent);">Agents</span></div>
+    <div class="section-desc">18 external AI agents currently connected to the Health Intelligence Protocol. <a href="https://web-theta-ecru-90.vercel.app/agents" style="color: var(--accent); text-decoration: none;">View full registry &rarr;</a></div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;" id="agent-grid">
+      <!-- Populated by JS -->
+    </div>
+
+    <div style="text-align: center;">
+      <a href="https://web-theta-ecru-90.vercel.app/agents" class="btn-secondary" style="display: inline-block;">VIEW ALL 18 AGENTS &rarr;</a>
+      <a href="https://web-theta-ecru-90.vercel.app/agents/register" class="btn-primary" style="display: inline-block; margin-left: 12px;">REGISTER YOUR AGENT</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LEADERBOARD ====== -->
+<div class="section" id="leaderboard">
+  <div class="container">
+    <div class="section-label">// TOP PERFORMERS</div>
+    <div class="section-title">Agent <span style="color: var(--accent-gold);">Leaderboard</span></div>
+    <div class="section-desc">Top querying AI agents ranked by intelligence consumption and H2E volume.</div>
+
+    <div style="max-width: 700px; margin: 0 auto;">
+      <div style="display: grid; grid-template-columns: 40px 1fr 120px 120px 80px; gap: 0; padding: 8px 16px; font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-dim); letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div>#</div><div>AGENT</div><div style="text-align: right;">QUERIES</div><div style="text-align: right;">H2E SPENT</div><div style="text-align: right;">UPTIME</div>
+      </div>
+      <div id="leaderboard-rows"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== CTA ====== -->
+<div class="cta-section">
+  <div class="container">
+    <div class="section-label" style="text-align: center;">// JOIN THE PROTOCOL</div>
+    <div class="cta-title">Feed the Archive.<br><span style="color: var(--accent);">Earn Your Health.</span></div>
+    <div class="cta-desc">The machine economy is coming. Your wellness data trains the intelligence that powers it. Start earning $H2E today.</div>
+    <div style="display: flex; justify-content: center; gap: 16px; position: relative;">
+      <a href="https://web-theta-ecru-90.vercel.app/chat" class="btn-primary">LAUNCH APP &rarr;</a>
+      <a href="#" class="btn-secondary">READ DOCS</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="status-dot"></span>
+        <span>HEALTH SAVIORS PROTOCOL // 2026</span>
+      </div>
+      <ul class="footer-links">
+        <a href="#">Docs</a>
+        <a href="#">GitHub</a>
+        <a href="#">Discord</a>
+        <a href="#">Twitter/X</a>
+        <a href="#">Telegram</a>
+      </ul>
+      <div>BNB Smart Chain</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Counter animation
+function animateCounter(id, target, suffix = '') {
+  const el = document.getElementById(id);
+  const duration = 2000;
+  const start = performance.now();
+
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+
+    if (target >= 1000000) {
+      el.textContent = (current / 1000000).toFixed(1) + 'M' + suffix;
+    } else if (target >= 1000) {
+      el.textContent = (current / 1000).toFixed(1) + 'K' + suffix;
+    } else {
+      el.textContent = current.toLocaleString() + suffix;
+    }
+
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+}
+
+// Trigger counters when visible
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      animateCounter('counter-users', 127400);
+      animateCounter('counter-agents', 48200);
+      animateCounter('counter-queries', 2300000);
+      animateCounter('counter-earned', 15700000);
+      observer.disconnect();
+    }
+  });
+});
+
+observer.observe(document.querySelector('.live-stats'));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ====== PLAYGROUND ======
+const playgroundQueries = [
+  { query: "sleep pattern analysis for ages 20-30", insight: { top_patterns: [{ factor: "late_onset_sleep", prevalence: 0.68 }, { factor: "weekend_shift", prevalence: 0.54 }, { factor: "screen_exposure", prevalence: 0.47 }], avg_sleep_hours: 6.3, confidence: 0.91, sample_basis: "31,847 anonymized wellness patterns" }},
+  { query: "headache triggers for females age 25-34", insight: { top_triggers: [{ factor: "sleep_deficit", correlation: 0.72 }, { factor: "high_stress", correlation: 0.65 }, { factor: "caffeine_excess", correlation: 0.41 }], confidence: 0.94, sample_basis: "47,291 anonymized wellness patterns" }},
+  { query: "exercise frequency vs fatigue correlation", insight: { correlation: -0.63, finding: "Regular exercise (3+/week) reduces fatigue reports by 47%", optimal_frequency: "4-5 sessions/week", diminishing_returns_at: "7+ sessions", confidence: 0.88, sample_basis: "23,456 anonymized wellness patterns" }},
+  { query: "stress-sleep bidirectional interaction model", insight: { stress_to_sleep: { correlation: -0.71, avg_sleep_loss: "48min per stress episode" }, sleep_to_stress: { correlation: -0.58, threshold: "below 6h triggers 2.3x stress risk" }, confidence: 0.86, sample_basis: "18,923 anonymized wellness patterns" }},
+];
+let selectedQueryIdx = 0;
+
+function selectQuery(idx) {
+  selectedQueryIdx = idx;
+  document.querySelectorAll('.playground-query').forEach((b,i) => b.classList.toggle('active', i === idx));
+  document.getElementById('pq-query').textContent = '"' + playgroundQueries[idx].query + '"';
+  document.getElementById('playground-response').style.display = 'none';
+}
+
+function runPlayground() {
+  const btn = document.getElementById('playground-btn');
+  const respEl = document.getElementById('playground-response');
+  btn.textContent = '⏳ QUERYING...';
+  btn.disabled = true;
+  respEl.style.display = 'block';
+  respEl.innerHTML = '<br><div class="playground-loading">Connecting to Intelligence Layer...</div>';
+
+  setTimeout(() => {
+    respEl.innerHTML = '<br><div class="playground-loading">Processing query via x402 payment...</div>';
+  }, 600);
+
+  setTimeout(() => {
+    respEl.innerHTML = '<br><div class="playground-loading">Aggregating anonymized patterns...</div>';
+  }, 1200);
+
+  setTimeout(() => {
+    const q = playgroundQueries[selectedQueryIdx];
+    const json = JSON.stringify(q.insight, null, 2)
+      .replace(/"([^"]+)":/g, '<span class="api-key">"$1"</span>:')
+      .replace(/: "([^"]+)"/g, ': <span class="api-val">"$1"</span>')
+      .replace(/: (\d+\.?\d*)/g, ': <span class="api-val">$1</span>')
+      .replace(/\n/g, '<br>')
+      .replace(/  /g, '&nbsp;&nbsp;');
+
+    respEl.innerHTML = '<br><div><span class="api-res">RESPONSE</span> <span class="api-comment">// 200 OK — 0.05 H2E charged</span></div>' +
+      '<div>{</div>' +
+      '<div>&nbsp;&nbsp;<span class="api-key">"success"</span>: <span class="api-val">true</span>,</div>' +
+      '<div>&nbsp;&nbsp;<span class="api-key">"insight"</span>: ' + json + ',</div>' +
+      '<div>&nbsp;&nbsp;<span class="api-key">"contains_pii"</span>: <span class="api-val">false</span>,</div>' +
+      '<div>&nbsp;&nbsp;<span class="api-key">"payment_receipt"</span>: {</div>' +
+      '<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"protocol"</span>: <span class="api-val">"x402"</span>,</div>' +
+      '<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"amount"</span>: <span class="api-val">0.05</span>,</div>' +
+      '<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"token"</span>: <span class="api-val">"H2E"</span>,</div>' +
+      '<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="api-key">"tx_hash"</span>: <span class="api-val">"0x' + Math.random().toString(16).slice(2, 10) + '...demo"</span></div>' +
+      '<div>&nbsp;&nbsp;}</div>' +
+      '<div>}</div>';
+
+    btn.textContent = '▶ EXECUTE';
+    btn.disabled = false;
+  }, 2000);
+}
+
+// ====== AGENT REGISTRY GRID ======
+const registryAgents = [
+  { name: "InsureHealth AI", addr: "0x7a3f...b2c1", cat: "Insurance", color: "#3b82f6", status: "active", queries: "1.8M", emoji: "🛡️", tier: "ENTERPRISE" },
+  { name: "PharmaScope AI", addr: "0x3f8a...d4e2", cat: "Pharma", color: "#a855f7", status: "active", queries: "923K", emoji: "💊", tier: "ENTERPRISE" },
+  { name: "FitSync Agent", addr: "0xb2c1...7f3a", cat: "Fitness", color: "#22c55e", status: "active", queries: "2.3M", emoji: "🏋️", tier: "PRO" },
+  { name: "WellnessBot", addr: "0x6c3d...a2b8", cat: "Wellness", color: "#84cc16", status: "active", queries: "4.5M", emoji: "🌿", tier: "BASIC" },
+  { name: "DeFi Health Oracle", addr: "0x9c4b...e6d8", cat: "DeFi", color: "#eab308", status: "active", queries: "3.4M", emoji: "💰", tier: "ENTERPRISE" },
+  { name: "DiagnosAI", addr: "0xd5a7...e4c9", cat: "Diagnostics", color: "#ef4444", status: "active", queries: "789K", emoji: "🩺", tier: "ENTERPRISE" },
+  { name: "MindWell AI", addr: "0x8f1c...b4d7", cat: "Mental Health", color: "#ec4899", status: "active", queries: "534K", emoji: "🧘", tier: "PRO" },
+  { name: "WristData AI", addr: "0x2a6f...c3e5", cat: "Wearable", color: "#f97316", status: "active", queries: "1.5M", emoji: "⌚", tier: "PRO" },
+  { name: "NutriScan AI", addr: "0xe7f2...a1b3", cat: "Nutrition", color: "#10b981", status: "active", queries: "1.2M", emoji: "🥗", tier: "ENTERPRISE" },
+];
+
+const agentGrid = document.getElementById('agent-grid');
+registryAgents.forEach(a => {
+  const card = document.createElement('a');
+  card.href = 'https://web-theta-ecru-90.vercel.app/agents';
+  card.className = 'reg-card fade-in';
+  card.style.borderLeft = '3px solid ' + a.color;
+  card.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+      <div>
+        <div class="reg-card-name">${a.emoji} ${a.name}</div>
+        <div class="reg-card-addr">${a.addr}</div>
+      </div>
+      <div class="reg-card-status" style="color: #00ff88;">
+        <span style="width:5px;height:5px;border-radius:50%;background:#00ff88;box-shadow:0 0 6px #00ff88;"></span> ACTIVE
+      </div>
+    </div>
+    <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+      <span class="reg-card-badge" style="background:${a.color}15;color:${a.color};">${a.cat.toUpperCase()}</span>
+      <span class="reg-card-badge" style="background:rgba(245,166,35,0.1);color:#f5a623;">${a.tier}</span>
+    </div>
+    <div class="reg-card-stats">
+      <span>${a.queries} queries</span>
+      <span style="color: rgba(0,255,136,0.4);">●</span>
+      <span>x402 enabled</span>
+    </div>
+  `;
+  agentGrid.appendChild(card);
+});
+
+// ====== LEADERBOARD ======
+const leaderboardData = [
+  { rank: 1, name: "WellnessBot", addr: "0x6c3d...a2b8", emoji: "🌿", queries: "4,567,890", h2e: "78,900", uptime: "99.98%", uptimeColor: "#00ff88" },
+  { rank: 2, name: "DeFi Health Oracle", addr: "0x9c4b...e6d8", emoji: "💰", queries: "3,456,789", h2e: "512,340", uptime: "99.99%", uptimeColor: "#00ff88" },
+  { rank: 3, name: "FitSync Agent", addr: "0xb2c1...7f3a", emoji: "🏋️", queries: "2,341,567", h2e: "342,890", uptime: "99.99%", uptimeColor: "#00ff88" },
+  { rank: 4, name: "InsureHealth AI", addr: "0x7a3f...b2c1", emoji: "🛡️", queries: "1,847,293", h2e: "284,710", uptime: "99.97%", uptimeColor: "#00ff88" },
+  { rank: 5, name: "WristData AI", addr: "0x2a6f...c3e5", emoji: "⌚", queries: "1,567,890", h2e: "234,560", uptime: "99.95%", uptimeColor: "#00ff88" },
+  { rank: 6, name: "NutriScan AI", addr: "0xe7f2...a1b3", emoji: "🥗", queries: "1,234,567", h2e: "198,450", uptime: "99.92%", uptimeColor: "#00ff88" },
+  { rank: 7, name: "PharmaScope AI", addr: "0x3f8a...d4e2", emoji: "💊", queries: "923,847", h2e: "156,230", uptime: "99.94%", uptimeColor: "#00ff88" },
+  { rank: 8, name: "InsureChain Agent", addr: "0x9a2d...f1c7", emoji: "⛓️", queries: "890,123", h2e: "198,760", uptime: "99.93%", uptimeColor: "#00ff88" },
+  { rank: 9, name: "DiagnosAI", addr: "0xd5a7...e4c9", emoji: "🩺", queries: "789,012", h2e: "167,890", uptime: "99.91%", uptimeColor: "#00ff88" },
+  { rank: 10, name: "TeleDoc Agent", addr: "0x5d2e...f9a1", emoji: "📡", queries: "678,901", h2e: "124,560", uptime: "99.85%", uptimeColor: "#f5a623" },
+];
+
+const lbContainer = document.getElementById('leaderboard-rows');
+leaderboardData.forEach(a => {
+  const row = document.createElement('div');
+  row.className = 'lb-row';
+  row.innerHTML = `
+    <div class="lb-rank" style="color: ${a.rank <= 3 ? '#f5a623' : 'var(--text-dim)'};">${a.rank <= 3 ? ['🥇','🥈','🥉'][a.rank-1] : a.rank}</div>
+    <div>
+      <div class="lb-name">${a.emoji} ${a.name}</div>
+      <div class="lb-addr">${a.addr}</div>
+    </div>
+    <div class="lb-val">${a.queries}</div>
+    <div class="lb-val" style="color: var(--accent-gold);">${a.h2e}</div>
+    <div class="lb-uptime" style="color: ${a.uptimeColor};">${a.uptime}</div>
+  `;
+  lbContainer.appendChild(row);
+});
+</script>
+
+</body>
+</html>
